@@ -1,0 +1,53 @@
+[
+  {
+    "id": "user1",
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "role": "staff",
+    "avatar": null,
+    "createdAt": "2023-01-15T00:00:00Z",
+    "updatedAt": "2024-01-10T00:00:00Z",
+    "phone": "+1 (555) 123-4567",
+    "department": "Engineering",
+    "status": "active",
+    "joinedAt": "2023-01-15T00:00:00Z"
+  },
+  {
+    "id": "user2",
+    "email": "jane.smith@example.com",
+    "name": "Jane Smith",
+    "role": "staff",
+    "avatar": null,
+    "createdAt": "2023-02-20T00:00:00Z",
+    "updatedAt": "2024-01-10T00:00:00Z",
+    "phone": "+1 (555) 234-5678",
+    "department": "Design",
+    "status": "active",
+    "joinedAt": "2023-02-20T00:00:00Z"
+  },
+  {
+    "id": "user3",
+    "email": "bob.johnson@example.com",
+    "name": "Bob Johnson",
+    "role": "staff",
+    "avatar": null,
+    "createdAt": "2023-03-10T00:00:00Z",
+    "updatedAt": "2024-01-10T00:00:00Z",
+    "department": "Engineering",
+    "status": "away",
+    "joinedAt": "2023-03-10T00:00:00Z"
+  },
+  {
+    "id": "manager1",
+    "email": "sarah.wilson@example.com",
+    "name": "Sarah Wilson",
+    "role": "manager",
+    "avatar": null,
+    "createdAt": "2022-12-01T00:00:00Z",
+    "updatedAt": "2024-01-10T00:00:00Z",
+    "phone": "+1 (555) 345-6789",
+    "department": "Management",
+    "status": "active",
+    "joinedAt": "2022-12-01T00:00:00Z"
+  }
+]

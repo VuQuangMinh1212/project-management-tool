@@ -1,0 +1,67 @@
+{
+  "taskSummary": {
+    "totalTasks": 45,
+    "completedTasks": 32,
+    "inProgressTasks": 8,
+    "overdueTasks": 3,
+    "completionRate": 71.1,
+    "averageCompletionTime": 4.2,
+    "tasksByStatus": [
+      { "status": "completed", "count": 32, "percentage": 71.1 },
+      { "status": "in_progress", "count": 8, "percentage": 17.8 },
+      { "status": "todo", "count": 2, "percentage": 4.4 },
+      { "status": "blocked", "count": 3, "percentage": 6.7 }
+    ],
+    "tasksByPriority": [
+      { "priority": "high", "count": 12, "percentage": 26.7 },
+      { "priority": "medium", "count": 20, "percentage": 44.4 },
+      { "priority": "low", "count": 13, "percentage": 28.9 }
+    ]
+  },
+  "productivity": [
+    {
+      "userId": "user1",
+      "userName": "John Doe",
+      "period": {
+        "startDate": "2024-01-01",
+        "endDate": "2024-01-31"
+      },
+      "metrics": {
+        "tasksCompleted": 15,
+        "hoursLogged": 120,
+        "productivity": 85,
+        "efficiency": 92,
+        "averageTaskTime": 8
+      },
+      "trends": [
+        { "date": "2024-01-01", "tasksCompleted": 2, "hoursLogged": 8 },
+        { "date": "2024-01-02", "tasksCompleted": 1, "hoursLogged": 6 },
+        { "date": "2024-01-03", "tasksCompleted": 3, "hoursLogged": 8 }
+      ]
+    }
+  ],
+  "timeTracking": {
+    "period": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-01-31"
+    },
+    "totalHours": 320,
+    "billableHours": 280,
+    "breakdown": {
+      "byUser": [
+        { "userId": "user1", "userName": "John Doe", "hours": 120, "tasks": 15 },
+        { "userId": "user2", "userName": "Jane Smith", "hours": 100, "tasks": 12 },
+        { "userId": "user3", "userName": "Bob Johnson", "hours": 100, "tasks": 10 }
+      ],
+      "byProject": [
+        { "projectId": "proj1", "projectName": "TaskFlow App", "hours": 200, "tasks": 25 },
+        { "projectId": "proj2", "projectName": "Website Redesign", "hours": 120, "tasks": 12 }
+      ],
+      "byDate": [
+        { "date": "2024-01-01", "hours": 24, "tasks": 8 },
+        { "date": "2024-01-02", "hours": 20, "tasks": 6 },
+        { "date": "2024-01-03", "hours": 28, "tasks": 9 }
+      ]
+    }
+  }
+}
