@@ -42,7 +42,7 @@ export function TeamStats({ tasks }: TeamStatsProps) {
 
         {/* Task Status Breakdown */}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium">Task Status</h4>
+          <h4 className="text-sm font-medium">Trạng Thái Nhiệm Vụ</h4>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <div className="flex items-center justify-between">
@@ -60,7 +60,7 @@ export function TeamStats({ tasks }: TeamStatsProps) {
             </div>
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">To Do</span>
+                <span className="text-xs text-muted-foreground">Cần Làm</span>
                 <span className="text-xs font-medium">{todoTasks}</span>
               </div>
               <Progress value={totalTasks > 0 ? (todoTasks / totalTasks) * 100 : 0} className="h-1" />
@@ -70,13 +70,13 @@ export function TeamStats({ tasks }: TeamStatsProps) {
 
         {/* Priority Tasks */}
         <div className="space-y-2">
-          <h4 className="text-sm font-medium">Priority Tasks</h4>
+          <h4 className="text-sm font-medium">Nhiệm Vụ Ưu Tiên</h4>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">High Priority</span>
+            <span className="text-muted-foreground">Ưu Tiên Cao</span>
             <span className="font-medium">{highPriorityTasks}</span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Urgent</span>
+            <span className="text-muted-foreground">Khẩn Cấp</span>
             <span className="font-medium text-red-600">{urgentTasks}</span>
           </div>
         </div>
@@ -85,7 +85,7 @@ export function TeamStats({ tasks }: TeamStatsProps) {
         {overdueTasks > 0 && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-sm text-red-800">
-              <span className="font-medium">{overdueTasks}</span> task{overdueTasks > 1 ? "s" : ""} overdue
+              <span className="font-medium">{overdueTasks}</span> nhiệm vụ quá hạn
             </p>
           </div>
         )}

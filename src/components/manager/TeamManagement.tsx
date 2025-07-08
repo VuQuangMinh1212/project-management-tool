@@ -101,7 +101,7 @@ const timeRangeFilters: TimeRangeFilter[] = [
     })
   },
   {
-    label: "Last 7 Days",
+    label: "7 ngày qua",
     value: "last_7_days",
     getRange: () => ({
       from: subDays(new Date(), 7),
@@ -479,7 +479,7 @@ export function TeamManagement() {
                           </div>
                           <div className="text-center">
                             <div className="text-2xl font-bold text-orange-600">{delayedTasks}</div>
-                            <div className="text-xs text-muted-foreground">Delayed</div>
+                            <div className="text-xs text-muted-foreground">Trì hoãn</div>
                           </div>
                         </>
                       )
@@ -496,9 +496,9 @@ export function TeamManagement() {
                 />
                 <Card>
                   <CardHeader>
-                    <CardTitle>Task Distribution</CardTitle>
+                    <CardTitle>Phân phối Nhiệm vụ</CardTitle>
                     <CardDescription>
-                      Tasks by status for {selectedStaff.name} in selected period
+                      Nhiệm vụ theo trạng thái cho {selectedStaff.name} trong khoảng thời gian đã chọn
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

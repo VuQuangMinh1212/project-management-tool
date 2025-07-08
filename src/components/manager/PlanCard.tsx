@@ -68,6 +68,34 @@ export function PlanCard({ plan, onClick }: PlanCardProps) {
     })
   }
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "planning":
+        return "Đang lập kế hoạch"
+      case "active":
+        return "Đang hoạt động"
+      case "completed":
+        return "Hoàn thành"
+      case "on_hold":
+        return "Tạm dừng"
+      default:
+        return status
+    }
+  }
+
+  const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "Cao"
+      case "medium":
+        return "Trung bình"
+      case "low":
+        return "Thấp"
+      default:
+        return priority
+    }
+  }
+
   return (
     <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
       <CardHeader className="pb-3">
@@ -78,10 +106,10 @@ export function PlanCard({ plan, onClick }: PlanCardProps) {
           </div>
           <div className="flex space-x-2">
             <Badge className={getStatusColor(plan.status)}>
-              {plan.status.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+              {getStatusLabel(plan.status)}
             </Badge>
             <Badge className={getPriorityColor(plan.priority)}>
-              {plan.priority.charAt(0).toUpperCase() + plan.priority.slice(1)}
+              {getPriorityLabel(plan.priority)}
             </Badge>
           </div>
         </div>
@@ -91,7 +119,7 @@ export function PlanCard({ plan, onClick }: PlanCardProps) {
         {/* Progress */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Progress</span>
+            <span className="text-muted-foreground">Tiến độ</span>
             <span className="font-medium">{plan.progress}%</span>
           </div>
           <Progress value={plan.progress} className="h-2" />
@@ -109,7 +137,7 @@ export function PlanCard({ plan, onClick }: PlanCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">{plan.teamSize} members</span>
+            <span className="text-sm text-muted-foreground">{plan.teamSize} thành viên</span>
           </div>
           <div className="flex -space-x-2">
             {plan.assignedTo.slice(0, 3).map((member) => (
@@ -136,7 +164,7 @@ export function PlanCard({ plan, onClick }: PlanCardProps) {
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-2">
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Budget</span>
+              <span className="text-muted-foreground">Ngân sách</span>
             </div>
             <span className="font-medium">
               ${plan.spent?.toLocaleString() || 0} / ${plan.budget.toLocaleString()}
@@ -146,7 +174,7 @@ export function PlanCard({ plan, onClick }: PlanCardProps) {
 
         {/* Objectives */}
         <div className="space-y-2">
-          <span className="text-sm font-medium">Key Objectives</span>
+          <span className="text-sm font-medium">Mục tiêu chính</span>
           <div className="space-y-1">
             {plan.objectives.slice(0, 2).map((objective, index) => (
               <div key={index} className="flex items-center space-x-2">
@@ -155,7 +183,7 @@ export function PlanCard({ plan, onClick }: PlanCardProps) {
               </div>
             ))}
             {plan.objectives.length > 2 && (
-              <span className="text-xs text-muted-foreground">+{plan.objectives.length - 2} more objectives</span>
+              <span className="text-xs text-muted-foreground">+{plan.objectives.length - 2} mục tiêu khác</span>
             )}
           </div>
         </div>

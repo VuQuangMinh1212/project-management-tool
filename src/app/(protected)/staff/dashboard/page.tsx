@@ -23,6 +23,7 @@ import { TASK_STATUS_LABELS, TASK_PRIORITY_LABELS } from "@/constants/taskStatus
 import { getLegacyTasks } from "@/mock/data/legacy-compatibility"
 import { useAuth } from "@/hooks/auth/useAuth"
 import { getCurrentWeek } from "@/lib/utils/weekUtils"
+import { processTasksStatus } from "@/lib/utils/taskUtils"
 
 export default function StaffDashboardPage() {
   const { user } = useAuth()
@@ -151,7 +152,9 @@ export default function StaffDashboardPage() {
         }
       ]
       
-      setTasks(mockTasks)
+      // Process tasks to automatically set overdue status
+      const processedTasks = processTasksStatus(mockTasks)
+      setTasks(processedTasks)
       setIsLoading(false)
     }, 1000)
   }, [user])
@@ -309,7 +312,7 @@ export default function StaffDashboardPage() {
                 onFiltersChange={setSelectedFilters}
               />
             </div>
-            {/* Show active filters */}
+            {/* Show active lọc */}
             {Object.values(selectedFilters).some(filters => filters.length > 0) && (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm text-blue-600">Bộ lọc hiện tại:</span>

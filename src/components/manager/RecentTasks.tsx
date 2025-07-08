@@ -79,19 +79,19 @@ export function RecentTasks({ tasks, initialDisplayCount = 3, staffName }: Recen
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />
-          {staffName ? `${staffName}'s Recent Tasks` : "Recent Tasks"}
+          {staffName ? `Nhiệm Vụ Gần Đây Của ${staffName}` : "Nhiệm Vụ Gần Đây"}
         </CardTitle>
         <CardDescription>
           {staffName 
-            ? `Latest tasks assigned to ${staffName} with overdue and upcoming deadlines highlighted`
-            : "Latest tasks with overdue and upcoming deadlines highlighted"
+            ? `Các nhiệm vụ mới nhất được giao cho ${staffName} với những hạn chót quá hạn và sắp tới được làm nổi bật`
+            : "Các nhiệm vụ mới nhất với những hạn chót quá hạn và sắp tới được làm nổi bật"
           }
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {displayedTasks.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            <p>No tasks found</p>
+            <p>Không tìm thấy nhiệm vụ</p>
           </div>
         ) : (
           <>
@@ -156,10 +156,10 @@ export function RecentTasks({ tasks, initialDisplayCount = 3, staffName }: Recen
                     }`}>
                       <Calendar className="h-3 w-3" />
                       <span>
-                        {isOverdue(task) && "Overdue: "}
-                        {isDueSoon(task) && !isOverdue(task) && "Due: "}
+                        {isOverdue(task) && "Quá hạn: "}
+                        {isDueSoon(task) && !isOverdue(task) && "Hạn: "}
                         {isToday(new Date(task.dueDate)) 
-                          ? "Today" 
+                          ? "Hôm nay" 
                           : format(new Date(task.dueDate), "MMM d")
                         }
                       </span>
@@ -172,7 +172,7 @@ export function RecentTasks({ tasks, initialDisplayCount = 3, staffName }: Recen
                   <div className="flex items-center gap-2 text-xs text-red-700 bg-red-100 px-2 py-1 rounded">
                     <AlertTriangle className="h-3 w-3" />
                     <span>
-                      Overdue by {Math.abs(differenceInDays(new Date(), new Date(task.dueDate!)))} day(s)
+                      Quá hạn {Math.abs(differenceInDays(new Date(), new Date(task.dueDate!)))} ngày
                     </span>
                   </div>
                 )}
@@ -186,7 +186,7 @@ export function RecentTasks({ tasks, initialDisplayCount = 3, staffName }: Recen
                 onClick={() => setShowAll(true)}
                 className="w-full mt-4"
               >
-                Show {remainingCount} more task{remainingCount > 1 ? "s" : ""}
+                Hiển thị thêm {remainingCount} nhiệm vụ
               </Button>
             )}
 
@@ -197,7 +197,7 @@ export function RecentTasks({ tasks, initialDisplayCount = 3, staffName }: Recen
                 onClick={() => setShowAll(false)}
                 className="w-full mt-4"
               >
-                Show less
+                Hiển thị ít hơn
               </Button>
             )}
           </>

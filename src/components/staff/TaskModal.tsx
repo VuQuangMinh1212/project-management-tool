@@ -52,13 +52,13 @@ import {
 import { useAuth } from "@/hooks/auth/useAuth";
 
 const taskSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, "Tiêu đề là bắt buộc"),
   description: z.string().optional(),
   priority: z.nativeEnum(TaskPriority),
-  projectId: z.string().min(1, "Project is required"),
+  projectId: z.string().min(1, "Dự án là bắt buộc"),
   startDate: z.string().optional(),
-  estimatedHours: z.number().min(0.5, "Minimum 0.5 hours").optional(),
-  weekSubmittedFor: z.string().min(1, "Week selection is required"),
+  estimatedHours: z.number().min(0.5, "Tối thiểu 0.5 giờ").optional(),
+  weekSubmittedFor: z.string().min(1, "Chọn tuần là bắt buộc"),
 });
 
 type TaskFormData = z.infer<typeof taskSchema>;
@@ -97,7 +97,8 @@ export function TaskModal({
      task.status === TaskStatus.DONE ||
      task.status === TaskStatus.FINISHED ||
      task.status === TaskStatus.DELAYED ||
-     task.status === TaskStatus.CANCELLED);
+     task.status === TaskStatus.CANCELLED ||
+     task.status === TaskStatus.OVERDUE);
   
   // Check permissions based on task status and user role
   const canEdit = () => {
@@ -139,6 +140,9 @@ export function TaskModal({
       case TaskStatus.IN_PROGRESS:
         // After approval (IN_PROGRESS), staff can only transition to finished, delayed, or cancelled
         return [TaskStatus.IN_PROGRESS, TaskStatus.FINISHED, TaskStatus.DELAYED, TaskStatus.CANCELLED];
+      case TaskStatus.OVERDUE:
+        // Overdue tasks can be updated to in_progress, finished, delayed, or cancelled
+        return [TaskStatus.OVERDUE, TaskStatus.IN_PROGRESS, TaskStatus.FINISHED, TaskStatus.DELAYED, TaskStatus.CANCELLED];
       case TaskStatus.FINISHED:
       case TaskStatus.DELAYED:
       case TaskStatus.CANCELLED:
@@ -319,8 +323,8 @@ export function TaskModal({
                 <p className="text-sm text-gray-600">{task.description}</p>
               )}
               <div className="flex items-center space-x-4 text-xs text-gray-500">
-                <span>Priority: {TASK_PRIORITY_LABELS[task.priority]}</span>
-                {task.projectName && <span>Project: {task.projectName}</span>}
+                <span>Mức Độ Ưu Tiên: {TASK_PRIORITY_LABELS[task.priority]}</span>
+                {task.projectName && <span>Dự án: {task.projectName}</span>}
                 {task.estimatedHours && <span>Ước tính Giờ: {task.estimatedHours}</span>}
               </div>
             </div>
@@ -328,13 +332,13 @@ export function TaskModal({
             {/* Status Update Section */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="statusUpdate">Update Status</Label>
+                <Label htmlFor="statusUpdate">Cập Nhật Trạng Thái</Label>
                 <Select
                   value={selectedStatus}
                   onValueChange={(value) => setSelectedStatus(value as TaskStatus)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select new status" />
+                    <SelectValue placeholder="Chọn trạng thái mới" />
                   </SelectTrigger>
                   <SelectContent>
                     {getAvailableStatuses().map((status) => (
@@ -347,6 +351,7 @@ export function TaskModal({
                             status === TaskStatus.FINISHED ? 'bg-green-600' :
                             status === TaskStatus.DELAYED ? 'bg-orange-500' :
                             status === TaskStatus.CANCELLED ? 'bg-red-500' :
+                            status === TaskStatus.OVERDUE ? 'bg-red-600' :
                             'bg-gray-500'
                           }`} />
                           <span>{TASK_STATUS_LABELS[status]}</span>
@@ -359,16 +364,16 @@ export function TaskModal({
 
               {/* Progress Note */}
               <div className="space-y-2">
-                <Label htmlFor="statusNote">Add Progress Note (Optional)</Label>
+                <Label htmlFor="statusNote">Thêm Ghi Chú Tiến Độ (Tùy chọn)</Label>
                 <Textarea
                   id="statusNote"
                   value={statusNote}
                   onChange={(e) => setStatusNote(e.target.value)}
-                  placeholder="Add any updates, blockers, or notes about your progress..."
+                  placeholder="Thêm cập nhật, rào cản hoặc ghi chú về tiến độ của bạn..."
                   rows={3}
                 />
                 <p className="text-xs text-gray-500">
-                  This note will be visible to your manager and help track progress.
+                  Ghi chú này sẽ hiển thị cho quản lý và giúp theo dõi tiến độ.
                 </p>
               </div>
             </div>
@@ -378,7 +383,7 @@ export function TaskModal({
               <>
                 <Separator />
                 <div className="space-y-2">
-                  <Label>Manager's Comments</Label>
+                  <Label>Nhận Xét Của Quản Lý</Label>
                   <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <div className="flex items-start space-x-2">
                       <MessageSquare className="h-4 w-4 mt-1 text-blue-600" />
@@ -399,7 +404,7 @@ export function TaskModal({
                 onClick={handleQuickStatusUpdate}
                 disabled={isSubmitting || !selectedStatus || selectedStatus === task.status}
               >
-                {isSubmitting ? "Updating..." : "Update Status"}
+                {isSubmitting ? "Đang cập nhật..." : "Cập Nhật Trạng Thái"}
               </Button>
             </div>
           </div>
@@ -507,14 +512,14 @@ export function TaskModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="projectId">Project</Label>
+              <Label htmlFor="projectId">Dự Án</Label>
               <Select
                 value={watch("projectId")}
                 onValueChange={(value) => setValue("projectId", value)}
                 disabled={!canEdit()}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select project" />
+                  <SelectValue placeholder="Chọn dự án" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="project-1">Website Redesign</SelectItem>
@@ -531,7 +536,7 @@ export function TaskModal({
           {/* Start Date and Hours */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">Ngày Bắt Đầu</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -541,7 +546,7 @@ export function TaskModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="estimatedHours">Estimated Hours</Label>
+              <Label htmlFor="estimatedHours">Ước Tính Giờ</Label>
               <Input
                 id="estimatedHours"
                 type="number"
@@ -562,7 +567,7 @@ export function TaskModal({
             <>
               <Separator />
               <div className="space-y-2">
-                <Label>Manager's Comments</Label>
+                <Label>Nhận Xét Của Quản Lý</Label>
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-start space-x-2">
                     <MessageSquare className="h-4 w-4 mt-1 text-gray-500" />

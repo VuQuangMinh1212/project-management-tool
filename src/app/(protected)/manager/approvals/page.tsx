@@ -108,6 +108,48 @@ export default function ApprovalsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
 
+  // Translation functions
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case "task_completion":
+        return "Hoàn thành nhiệm vụ";
+      case "time_off":
+        return "Nghỉ phép";
+      case "expense":
+        return "Chi phí";
+      case "project_change":
+        return "Thay đổi dự án";
+      default:
+        return type.replace("_", " ");
+    }
+  };
+
+  const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "Cao";
+      case "medium":
+        return "Trung bình";
+      case "low":
+        return "Thấp";
+      default:
+        return priority;
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "Đang chờ";
+      case "approved":
+        return "Đã phê duyệt";
+      case "rejected":
+        return "Đã từ chối";
+      default:
+        return status;
+    }
+  };
+
   useEffect(() => {
     // Simulate API call
     setTimeout(() => {
@@ -142,25 +184,25 @@ export default function ApprovalsPage() {
   const pendingApprovals = approvals.filter((a) => a.status === "pending");
   const processedApprovals = approvals.filter((a) => a.status !== "pending");
 
-  // Generate filter groups for approvals
+  // Generate lọc groups for approvals
   const approvalFilterGroups = useMemo(() => {
     const typeOptions = Array.from(new Set(approvals.map(approval => approval.type)))
       .map(type => ({
-        label: type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        label: getTypeLabel(type),
         value: type,
         count: approvals.filter(approval => approval.type === type).length
       }));
 
     const priorityOptions = Array.from(new Set(approvals.map(approval => approval.priority)))
       .map(priority => ({
-        label: priority.charAt(0).toUpperCase() + priority.slice(1),
+        label: getPriorityLabel(priority),
         value: priority,
         count: approvals.filter(approval => approval.priority === priority).length
       }));
 
     const statusOptions = Array.from(new Set(approvals.map(approval => approval.status)))
       .map(status => ({
-        label: status.charAt(0).toUpperCase() + status.slice(1),
+        label: getStatusLabel(status),
         value: status,
         count: approvals.filter(approval => approval.status === status).length
       }));
@@ -168,19 +210,19 @@ export default function ApprovalsPage() {
     return [
       {
         id: "type",
-        label: "Type",
+        label: "Loại",
         options: typeOptions,
         type: "multiple" as const
       },
       {
         id: "priority",
-        label: "Priority",
+        label: "Ưu Tiên",
         options: priorityOptions,
         type: "multiple" as const
       },
       {
         id: "status",
-        label: "Status",
+        label: "Trạng Thái",
         options: statusOptions,
         type: "multiple" as const
       }
@@ -192,19 +234,19 @@ export default function ApprovalsPage() {
     const suggestions = new Set<{ value: string; category?: string }>();
 
     approvals.forEach(approval => {
-      suggestions.add({ value: approval.title, category: "Title" });
-      suggestions.add({ value: approval.requestedBy.name, category: "Requester" });
-      suggestions.add({ value: approval.type.replace('_', ' '), category: "Type" });
+      suggestions.add({ value: approval.title, category: "Tiêu đề" });
+      suggestions.add({ value: approval.requestedBy.name, category: "Người yêu cầu" });
+      suggestions.add({ value: approval.type.replace('_', ' '), category: "Loại" });
     });
 
     return Array.from(suggestions);
   }, [approvals]);
 
-  // Apply search and filters to approvals
+  // Apply search and lọc to approvals
   const filteredApprovals = useMemo(() => {
     let filtered = approvals;
 
-    // Apply search filter
+    // Apply search lọc
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase();
       filtered = filtered.filter(approval => 
@@ -215,7 +257,7 @@ export default function ApprovalsPage() {
       );
     }
 
-    // Apply selected filters
+    // Apply selected lọc
     Object.entries(selectedFilters).forEach(([filterType, values]) => {
       if (values.length > 0) {
         filtered = filtered.filter(approval => {
@@ -469,7 +511,7 @@ export default function ApprovalsPage() {
                         {approval.title}
                       </CardTitle>
                       <CardDescription>
-                        Requested by {approval.requestedBy.name} •{" "}
+                        Yêu cầu bởi {approval.requestedBy.name} •{" "}
                         {format(
                           new Date(approval.requestedAt),
                           "MMM d, yyyy 'at' h:mm a"
@@ -480,13 +522,12 @@ export default function ApprovalsPage() {
                   <div className="flex items-center space-x-2">
                     <Badge className={getTypeColor(approval.type)}>
                       {getTypeIcon(approval.type)}
-                      <span className="ml-1 capitalize">
-                        {approval.type.replace("_", " ")}
+                      <span className="ml-1">
+                        {getTypeLabel(approval.type)}
                       </span>
                     </Badge>
                     <Badge className={getPriorityColor(approval.priority)}>
-                      {approval.priority.charAt(0).toUpperCase() +
-                        approval.priority.slice(1)}
+                      {getPriorityLabel(approval.priority)}
                     </Badge>
                   </div>
                 </div>
@@ -595,8 +636,7 @@ export default function ApprovalsPage() {
                         : "bg-red-100 text-red-800"
                     }
                   >
-                    {approval.status.charAt(0).toUpperCase() +
-                      approval.status.slice(1)}
+                    {getStatusLabel(approval.status)}
                   </Badge>
                 </div>
               </CardHeader>

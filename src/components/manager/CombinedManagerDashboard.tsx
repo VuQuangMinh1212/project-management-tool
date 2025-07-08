@@ -34,6 +34,7 @@ import { TaskStatus } from "@/types/task";
 import type { TeamMember } from "@/types/user";
 import { getLegacyTasks, getLegacyTeamMembers } from "@/mock/data/legacy-compatibility";
 import { mockUsersWithStats, mockTasksWithDetails, mockPlans } from "@/mock/data";
+import { processTasksStatus } from "@/lib/utils/taskUtils";
 
 const mockTeamMembers: TeamMember[] = getLegacyTeamMembers();
 
@@ -46,7 +47,9 @@ export function CombinedManagerDashboard() {
 
   useEffect(() => {
     setTimeout(() => {
-      setTasks(getLegacyTasks());
+      // Process tasks to automatically set overdue status
+      const processedTasks = processTasksStatus(getLegacyTasks());
+      setTasks(processedTasks);
       setIsLoading(false);
     }, 1000);
   }, []);

@@ -80,7 +80,7 @@ export function FilterDropdown({ groups, selectedFilters, onFiltersChange, class
         <Button variant="outline" className={cn("justify-between", className)}>
           <div className="flex items-center space-x-2">
             <Filter className="h-4 w-4" />
-            <span>Filters</span>
+            <span>lọc</span>
             {getTotalFilterCount() > 0 && (
               <Badge variant="secondary" className="ml-2">
                 {getTotalFilterCount()}
@@ -93,10 +93,10 @@ export function FilterDropdown({ groups, selectedFilters, onFiltersChange, class
       <PopoverContent className="w-80 p-0" align="end" side="bottom">
         <div className="p-4">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="font-medium">Filters</h4>
+            <h4 className="font-medium">lọc</h4>
             {getTotalFilterCount() > 0 && (
               <Button variant="ghost" size="sm" onClick={clearFilters}>
-                Clear all
+                Xóa tất cả
               </Button>
             )}
           </div>
@@ -113,7 +113,7 @@ export function FilterDropdown({ groups, selectedFilters, onFiltersChange, class
                       onClick={() => clearGroupFilters(group.id)}
                       className="h-auto p-0"
                     >
-                      Clear
+                      Xóa
                     </Button>
                   )}
                 </div>

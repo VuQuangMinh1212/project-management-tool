@@ -237,16 +237,16 @@ export function DraftTaskManager({
                           </p>
                         )}
                         <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                          <span>Priority: {TASK_PRIORITY_LABELS[task.priority]}</span>
+                          <span>Mức Độ Ưu Tiên: {TASK_PRIORITY_LABELS[task.priority]}</span>
                           {task.estimatedHours && (
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {task.estimatedHours}h
+                              {task.estimatedHours} giờ
                             </span>
                           )}
                           {task.dueDate && (
                             <span>
-                              Due: {format(new Date(task.dueDate), "MMM d")}
+                              Hạn: {format(new Date(task.dueDate), "MMM d")}
                             </span>
                           )}
                         </div>

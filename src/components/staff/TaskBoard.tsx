@@ -17,6 +17,7 @@ import { type Task, TaskStatus } from "@/types/task";
 import { TASK_STATUS_LABELS, TASK_STATUS_COLORS } from "@/constants/taskStatus";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { processTasksStatus } from "@/lib/utils/taskUtils";
 
 interface TaskBoardProps {
   tasks: Task[];
@@ -52,10 +53,12 @@ export function TaskBoard({
   // Sync local tasks with propTasks when prop changes
   useEffect(() => {
     console.log("Syncing tasks with propTasks:", propTasks);
-    setTasks(propTasks);
+    // Process tasks to automatically set overdue status
+    const processedTasks = processTasksStatus(propTasks);
+    setTasks(processedTasks);
   }, [propTasks]);
 
-  // Filter tasks based on search term and selected filters (passed from parent)
+  // Filter tasks based on search term and selected lọc (passed from parent)
   const filteredTasks = useMemo(() => {
     let filtered = tasks;
 
@@ -71,7 +74,7 @@ export function TaskBoard({
       );
     }
 
-    // Apply selected filters
+    // Apply selected lọc
     Object.entries(selectedFilters).forEach(([filterType, values]) => {
       if (values.length > 0) {
         filtered = filtered.filter(task => {
@@ -115,7 +118,7 @@ export function TaskBoard({
 
   // Get columns to display based on status filter
   const columnsToShow = useMemo(() => {
-    // Check if there are specific status filters in selectedFilters
+    // Check if there are specific status lọc in selectedFilters
     const statusFilters = selectedFilters?.status || [];
     
     let statusesToShow: TaskStatus[];
@@ -124,7 +127,7 @@ export function TaskBoard({
       // Show all columns when no status filter is applied
       statusesToShow = Object.values(TaskStatus);
     } else if (statusFilters.length > 0) {
-      // Use selectedFilters.status if available (multiple status filters)
+      // Use selectedFilters.status if available (multiple status lọc)
       statusesToShow = Object.values(TaskStatus).filter(status => statusFilters.includes(status));
     } else if (statusFilter !== "all") {
       // Use single statusFilter if no selectedFilters.status

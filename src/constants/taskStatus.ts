@@ -10,6 +10,7 @@ export enum TaskStatus {
   DELAYED = "delayed", // Staff reported delay
   CANCELLED = "cancelled", // Staff cancelled the task
   REJECTED = "rejected", // Manager rejected with comments
+  OVERDUE = "overdue", // Task is past its due date
 }
 
 // User roles matching database schema
@@ -37,6 +38,7 @@ export const TASK_STATUS_LABELS = {
   [TaskStatus.DELAYED]: "Bị Trễ",
   [TaskStatus.CANCELLED]: "Đã Hủy",
   [TaskStatus.REJECTED]: "Bị Từ Chối",
+  [TaskStatus.OVERDUE]: "Quá Hạn",
 } as const;
 
 export const USER_ROLE_LABELS = {
@@ -62,6 +64,7 @@ export const TASK_STATUS_COLORS = {
   [TaskStatus.DELAYED]: "bg-orange-100 text-orange-800",
   [TaskStatus.CANCELLED]: "bg-red-100 text-red-800",
   [TaskStatus.REJECTED]: "bg-red-100 text-red-800",
+  [TaskStatus.OVERDUE]: "bg-red-200 text-red-900",
 } as const;
 
 export const PLAN_STATUS_COLORS = {

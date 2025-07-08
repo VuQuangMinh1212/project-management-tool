@@ -15,6 +15,7 @@ import { TaskStatus, TaskPriority } from "@/types/task"
 import { TASK_STATUS_LABELS, TASK_PRIORITY_LABELS } from "@/constants/taskStatus"
 import { getLegacyTasks } from "@/mock/data/legacy-compatibility"
 import { useRealTimeUpdates } from "@/hooks/socket/useRealTimeUpdates"
+import { processTasksStatus } from "@/lib/utils/taskUtils"
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
@@ -34,7 +35,9 @@ export default function TasksPage() {
   useEffect(() => {
     // Simulate API call
     setTimeout(() => {
-      setTasks(getLegacyTasks())
+      // Process tasks to automatically set overdue status
+      const processedTasks = processTasksStatus(getLegacyTasks())
+      setTasks(processedTasks)
       setIsLoading(false)
     }, 1000)
   }, [])
@@ -138,7 +141,7 @@ export default function TasksPage() {
     return Array.from(suggestions);
   }, [tasks]);
 
-  // Filter tasks based on search and filters
+  // Filter tasks based on search and lọc
   const filteredTasks = useMemo(() => {
     let filtered = tasks;
 
@@ -154,7 +157,7 @@ export default function TasksPage() {
       );
     }
 
-    // Apply selected filters
+    // Apply selected lọc
     Object.entries(selectedFilters).forEach(([filterType, values]) => {
       if (values.length > 0) {
         filtered = filtered.filter(task => {
@@ -255,7 +258,7 @@ export default function TasksPage() {
         </div>
       </div>
 
-      {/* Search and Filters */}
+      {/* Search and lọc */}
       <div className="flex items-center gap-4">
         <SearchWithSuggestions
           placeholder="Tìm kiếm nhiệm vụ..."
@@ -274,7 +277,7 @@ export default function TasksPage() {
         )}
       </div>
 
-      {/* Active filters display */}
+      {/* Active lọc display */}
       {Object.values(selectedFilters).some(filters => filters.length > 0) && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>Bộ lọc hiện tại:</span>

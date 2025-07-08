@@ -190,7 +190,7 @@ export function PersonStats({ user, tasks, plans, dateRange }: PersonStatsProps)
         {/* Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Overall Progress</span>
+            <span>Tiến Độ Tổng Thể</span>
             <span>{stats.averageProgress.toFixed(1)}%</span>
           </div>
           <Progress value={stats.averageProgress} className="h-3" />
@@ -235,12 +235,12 @@ export function PersonStats({ user, tasks, plans, dateRange }: PersonStatsProps)
         <div className="space-y-3">
           <h4 className="font-medium flex items-center">
             <BarChart3 className="mr-2 h-4 w-4" />
-            Task Breakdown
+            Phân Tích Nhiệm Vụ
           </h4>
           <div className="grid grid-cols-3 gap-3">
             <div className="text-center">
               <div className="text-lg font-semibold text-blue-600">{stats.todoTasks}</div>
-              <div className="text-xs text-muted-foreground">To Do</div>
+              <div className="text-xs text-muted-foreground">Cần Làm</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-semibold text-yellow-600">{stats.inProgressTasks}</div>
@@ -248,7 +248,7 @@ export function PersonStats({ user, tasks, plans, dateRange }: PersonStatsProps)
             </div>
             <div className="text-center">
               <div className="text-lg font-semibold text-green-600">{stats.completedTasks}</div>
-              <div className="text-xs text-muted-foreground">Done</div>
+              <div className="text-xs text-muted-foreground">Hoàn Thành</div>
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@ export function PersonStats({ user, tasks, plans, dateRange }: PersonStatsProps)
         {/* Recent Tasks Preview */}
         {userTasks.length > 0 && (
           <div className="space-y-3">
-            <h4 className="font-medium">Recent Tasks</h4>
+            <h4 className="font-medium">Nhiệm Vụ Gần Đây</h4>
             <div className="space-y-2">
               {userTasks.slice(0, 3).map(task => (
                 <div key={task.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
@@ -283,7 +283,7 @@ export function PersonStats({ user, tasks, plans, dateRange }: PersonStatsProps)
               ))}
               {userTasks.length > 3 && (
                 <div className="text-center text-sm text-muted-foreground">
-                  +{userTasks.length - 3} more tasks
+                  +{userTasks.length - 3} nhiệm vụ khác
                 </div>
               )}
             </div>

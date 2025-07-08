@@ -36,6 +36,7 @@ const COLORS = {
   [TaskStatus.DELAYED]: "#dc2626",
   [TaskStatus.CANCELLED]: "#6b7280",
   [TaskStatus.REJECTED]: "#ef4444",
+  [TaskStatus.OVERDUE]: "#dc2626",
 };
 
 const PRIORITY_COLORS = {

@@ -12,6 +12,7 @@ import {
   TASK_PRIORITY_COLORS,
 } from "@/constants/taskStatus"; // Updated imports
 import { cn } from "@/lib/utils";
+import { isTaskOverdue } from "@/lib/utils/taskUtils";
 
 interface TaskCardProps {
   task: Task;
@@ -19,7 +20,7 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onClick }: TaskCardProps) {
-  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date();
+  const isOverdue = isTaskOverdue(task);
 
   return (
     <Card

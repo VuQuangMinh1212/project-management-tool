@@ -51,17 +51,17 @@ export function WorkflowBuilder({ workflow, onSave, onCancel }: WorkflowBuilderP
   })
 
   const stepTypes = [
-    { value: "approval", label: "Approval Required" },
-    { value: "assignment", label: "Task Assignment" },
-    { value: "notification", label: "Send Notification" },
-    { value: "condition", label: "Conditional Logic" },
+    { value: "approval", label: "Cần phê duyệt" },
+    { value: "assignment", label: "Giao nhiệm vụ" },
+    { value: "notification", label: "Gửi thông báo" },
+    { value: "condition", label: "Logic điều kiện" },
   ]
 
   const triggers = [
-    { value: "task_created", label: "Task Created" },
+    { value: "task_created", label: "Nhiệm vụ được tạo" },
     { value: "task_completed", label: "Nhiệm vụ Hoàn thành" },
-    { value: "project_started", label: "Project Started" },
-    { value: "deadline_approaching", label: "Deadline Approaching" },
+    { value: "project_started", label: "Dự án bắt đầu" },
+    { value: "deadline_approaching", label: "Gần hạn" },
   ]
 
   const addStep = () => {
@@ -137,28 +137,28 @@ export function WorkflowBuilder({ workflow, onSave, onCancel }: WorkflowBuilderP
       {/* Workflow Details */}
       <Card>
         <CardHeader>
-          <CardTitle>Workflow Configuration</CardTitle>
-          <CardDescription>Define the basic workflow settings</CardDescription>
+          <CardTitle>Cấu hình Workflow</CardTitle>
+          <CardDescription>Định nghĩa cài đặt workflow cơ bản</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Workflow Name</Label>
+              <Label htmlFor="name">Tên Workflow</Label>
               <Input
                 id="name"
                 value={currentWorkflow.name}
                 onChange={(e) => setCurrentWorkflow((prev) => ({ ...prev, name: e.target.value }))}
-                placeholder="Enter workflow name"
+                placeholder="Nhập tên workflow"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="trigger">Trigger Event</Label>
+              <Label htmlFor="trigger">Sự kiện Kích hoạt</Label>
               <Select
                 value={currentWorkflow.trigger}
                 onValueChange={(value) => setCurrentWorkflow((prev) => ({ ...prev, trigger: value }))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select trigger" />
+                  <SelectValue placeholder="Chọn sự kiện kích hoạt" />
                 </SelectTrigger>
                 <SelectContent>
                   {triggers.map((trigger) => (
@@ -171,12 +171,12 @@ export function WorkflowBuilder({ workflow, onSave, onCancel }: WorkflowBuilderP
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Mô tả</Label>
             <Input
               id="description"
               value={currentWorkflow.description}
               onChange={(e) => setCurrentWorkflow((prev) => ({ ...prev, description: e.target.value }))}
-              placeholder="Describe what this workflow does"
+              placeholder="Mô tả workflow này làm gì"
             />
           </div>
         </CardContent>
@@ -185,8 +185,8 @@ export function WorkflowBuilder({ workflow, onSave, onCancel }: WorkflowBuilderP
       {/* Workflow Steps */}
       <Card>
         <CardHeader>
-          <CardTitle>Workflow Steps</CardTitle>
-          <CardDescription>Define the sequence of actions for this workflow</CardDescription>
+          <CardTitle>Các Bước Workflow</CardTitle>
+          <CardDescription>Định nghĩa trình tự các hành động cho workflow này</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Existing Steps */}
@@ -219,16 +219,16 @@ export function WorkflowBuilder({ workflow, onSave, onCancel }: WorkflowBuilderP
           <div className="border-t pt-4">
             <div className="grid grid-cols-4 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="stepName">Step Name</Label>
+                <Label htmlFor="stepName">Tên Bước</Label>
                 <Input
                   id="stepName"
                   value={newStep.name}
                   onChange={(e) => setNewStep((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="Step name"
+                  placeholder="Tên bước"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="stepType">Step Type</Label>
+                <Label htmlFor="stepType">Loại Bước</Label>
                 <Select
                   value={newStep.type}
                   onValueChange={(value) => setNewStep((prev) => ({ ...prev, type: value as WorkflowStep["type"] }))}
@@ -246,18 +246,18 @@ export function WorkflowBuilder({ workflow, onSave, onCancel }: WorkflowBuilderP
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="stepDescription">Description</Label>
+                <Label htmlFor="stepDescription">Mô tả</Label>
                 <Input
                   id="stepDescription"
                   value={newStep.description || ""}
                   onChange={(e) => setNewStep((prev) => ({ ...prev, description: e.target.value }))}
-                  placeholder="Optional description"
+                  placeholder="Mô tả tùy chọn"
                 />
               </div>
               <div className="flex items-end">
                 <Button onClick={addStep} disabled={!newStep.name || !newStep.type}>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Step
+                  Thêm Bước
                 </Button>
               </div>
             </div>
@@ -268,10 +268,10 @@ export function WorkflowBuilder({ workflow, onSave, onCancel }: WorkflowBuilderP
       {/* Actions */}
       <div className="flex justify-end space-x-2">
         <Button variant="outline" onClick={onCancel}>
-          Cancel
+          Hủy
         </Button>
         <Button onClick={handleSave} disabled={!currentWorkflow.name || !currentWorkflow.trigger}>
-          Save Workflow
+          Lưu Workflow
         </Button>
       </div>
     </div>

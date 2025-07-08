@@ -9,6 +9,7 @@ import { AlertTriangle, Calendar, User, Clock, ChevronRight, ArrowLeft } from "l
 import type { Task } from "@/types/task"
 import { TaskStatus, TaskPriority } from "@/types/task"
 import { format, isPast, differenceInDays } from "date-fns"
+import { isTaskOverdue } from "@/lib/utils/taskUtils"
 
 interface OverdueTasksProps {
   tasks: Task[]
@@ -18,7 +19,7 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
   const [selectedMember, setSelectedMember] = useState<string | null>(null)
   
   const overdueTasks = tasks.filter(
-    (task) => task.dueDate && isPast(new Date(task.dueDate)) && task.status !== TaskStatus.DONE
+    (task) => task.status === TaskStatus.OVERDUE || isTaskOverdue(task)
   )
 
   // Group overdue tasks by assignee
@@ -83,7 +84,7 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
             <Clock className="h-5 w-5" />
             Nhiệm vụ Quá hạn
           </CardTitle>
-          <CardDescription>Tasks that are past their due date</CardDescription>
+          <CardDescription>Những nhiệm vụ đã quá hạn hoàn thành</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-green-600">
@@ -91,7 +92,7 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
               <Clock className="h-8 w-8" />
             </div>
             <p className="font-medium">Tuyệt vời! Không có nhiệm vụ quá hạn</p>
-            <p className="text-sm text-muted-foreground mt-1">All tasks are on track</p>
+            <p className="text-sm text-muted-foreground mt-1">Tất cả nhiệm vụ đều đúng tiến độ</p>
           </div>
         </CardContent>
       </Card>
@@ -111,7 +112,7 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
                 className="text-red-700 hover:text-red-800"
               >
                 <ArrowLeft className="h-4 w-4 mr-1" />
-                Back
+                Quay lại
               </Button>
             )}
             <div>
@@ -124,7 +125,7 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
               </CardTitle>
               <CardDescription className="text-red-600">
                 {selectedMember
-                  ? `${selectedMemberTasks.length} task${selectedMemberTasks.length > 1 ? 's' : ''} need attention`
+                  ? `${selectedMemberTasks.length} nhiệm vụ cần được chú ý`
                   : "Thành viên nhóm có nhiệm vụ quá hạn"
                 }
               </CardDescription>
