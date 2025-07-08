@@ -44,7 +44,7 @@ pipeline {
                 sh '''
                     docker stop project-management-tool || true
                     docker rm project-management-tool || true
-                    docker run -d --name project-management-tool -p 3002:3000 --restart=unless-stopped ${DOCKER_IMAGE}:latest
+                    docker run -d --name project-management-tool -p 3003:3000 --restart=unless-stopped ${DOCKER_IMAGE}:latest
                 '''
             }
         }
