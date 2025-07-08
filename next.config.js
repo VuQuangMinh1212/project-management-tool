@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/project-management-tool',
-assetPrefix: '/project-management-tool/',
-trailingSlash: true,
   experimental: {
     serverActions: {
       allowedOrigins: ["localhost:3000"],
