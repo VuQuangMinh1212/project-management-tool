@@ -152,7 +152,6 @@ export function ManagerApproval({ pendingBatches, onBatchApproval }: ManagerAppr
 
       await onBatchApproval({ batchId, approvals });
       
-      // Clear decisions for this batch
       const clearedDecisions = { ...taskDecisions };
       batch.tasks.forEach(task => {
         delete clearedDecisions[task.id];

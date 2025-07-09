@@ -133,7 +133,6 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
       </CardHeader>
       <CardContent className="space-y-3 pt-4">
         {!selectedMember ? (
-          // Summary view showing members with overdue task counts
           <>
             {memberSummaries.map((member) => (
               <div
@@ -182,7 +181,6 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
             ))}
           </>
         ) : (
-          // Detailed view showing individual tasks for selected member
           <>
             {selectedMemberTasks.map((task) => {
               const daysOverdue = Math.abs(differenceInDays(new Date(), new Date(task.dueDate!)))

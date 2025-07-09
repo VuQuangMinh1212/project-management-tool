@@ -184,7 +184,6 @@ export function TaskModal({
       });
     }
     
-    // Reset status selection when modal opens
     if (open) {
       setSelectedStatus("");
       setStatusNote("");
@@ -254,12 +253,10 @@ export function TaskModal({
         status: newStatus,
       };
       
-      // Add status note if provided
       if (statusNote.trim()) {
         updates.statusNote = statusNote.trim();
       }
       
-      // Manager review comment
       if (newComment.trim() && isManager) {
         updates.reviewComment = newComment.trim();
       }

@@ -45,7 +45,6 @@ export function TeamDashboard() {
 
   useEffect(() => {
     setTimeout(() => {
-      // Process tasks to automatically set overdue status
       const processedTasks = processTasksStatus(getLegacyTasks());
       setTasks(processedTasks);
       setIsLoading(false);
@@ -54,7 +53,6 @@ export function TeamDashboard() {
 
   useEffect(() => {
     setTimeout(() => {
-      // Process tasks to automatically set overdue status
       const processedTasks = processTasksStatus(getLegacyTasks());
       setTasks(processedTasks);
       setIsLoading(false);
@@ -77,13 +75,11 @@ export function TeamDashboard() {
     ? teamMembers.find((member) => member.id === selectedStaffId)
     : null;
 
-  // Generate search suggestions for staff names only
   const staffSearchSuggestions = teamMembers.map(member => ({
     value: member.name,
     category: "staff"
   }));
 
-  // Handle staff selection from search
   const handleStaffSelect = (staffName: string) => {
     const staff = teamMembers.find(member => member.name === staffName);
     if (staff) {
@@ -92,7 +88,6 @@ export function TeamDashboard() {
     }
   };
 
-  // Clear staff selection
   const clearStaffSelection = () => {
     setSelectedStaffId(null);
     setStaffSearchQuery("");

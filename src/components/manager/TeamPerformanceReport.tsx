@@ -30,12 +30,10 @@ export function TeamPerformanceReport({ users, tasks, plans }: TeamPerformanceRe
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [hasInteracted, setHasInteracted] = useState(false)
 
-  // Filter employees only (managers typically don't have task assignments)
   const employees = useMemo(() => {
     return users.filter(user => user.role === "employee")
   }, [users])
 
-  // Generate search suggestions
   const searchSuggestions = useMemo(() => {
     const suggestions = new Set<{ value: string; category?: string }>()
     
@@ -47,32 +45,26 @@ export function TeamPerformanceReport({ users, tasks, plans }: TeamPerformanceRe
     return Array.from(suggestions)
   }, [employees])
 
-  // Handle search input change
   const handleSearchChange = (value: string) => {
     setSearchQuery(value)
     if (value.trim() && !hasInteracted) {
-      // When user starts searching, set default to "This Month" and mark as interacted
       setDateRange(getDateRangeForPeriod("month", 0))
       setHasInteracted(true)
     }
   }
 
-  // Handle date range change
   const handleDateRangeChange = (newDateRange: DateRange | null) => {
     setDateRange(newDateRange)
     setHasInteracted(true)
   }
 
-  // Determine if we should show results
   const shouldShowResults = hasInteracted || searchQuery.trim().length > 0
 
-  // Filter and sort users (only when we should show results)
   const filteredAndSortedUsers = useMemo(() => {
     if (!shouldShowResults) return []
 
     let filtered = employees
 
-    // Apply search filter
     if (searchQuery) {
       const searchLower = searchQuery.toLowerCase()
       filtered = filtered.filter(user => 
@@ -81,12 +73,10 @@ export function TeamPerformanceReport({ users, tasks, plans }: TeamPerformanceRe
       )
     }
 
-    // Apply role filter (future expansion for different employee types)
     if (selectedRole !== "all") {
       filtered = filtered.filter(user => user.role === selectedRole)
     }
 
-    // Calculate performance metrics for sorting (only if we have a date range)
     if (!dateRange) return []
 
     const usersWithMetrics = filtered.map(user => {
@@ -94,7 +84,6 @@ export function TeamPerformanceReport({ users, tasks, plans }: TeamPerformanceRe
         .filter(plan => plan.user_id === user.id)
         .map(plan => plan.id)
       
-      // Filter tasks by date range
       const userTasks = tasks.filter(task => {
         const belongsToUser = userPlanIds.includes(task.plan_id)
         const isInRange = task.created_at ? isDateInRange(task.created_at, dateRange) : false
@@ -119,7 +108,6 @@ export function TeamPerformanceReport({ users, tasks, plans }: TeamPerformanceRe
       }
     })
 
-    // Sort users based on selected criteria
     usersWithMetrics.sort((a, b) => {
       let aValue: number
       let bValue: number
@@ -152,7 +140,6 @@ export function TeamPerformanceReport({ users, tasks, plans }: TeamPerformanceRe
     return usersWithMetrics
   }, [employees, searchQuery, selectedRole, sortBy, sortOrder, plans, tasks, dateRange, shouldShowResults])
 
-  // Calculate team summary statistics (only when showing results)
   const teamSummary = useMemo(() => {
     if (!shouldShowResults || !dateRange) {
       return {

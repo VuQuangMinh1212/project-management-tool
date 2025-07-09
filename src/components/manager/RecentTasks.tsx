@@ -19,16 +19,13 @@ interface RecentTasksProps {
 export function RecentTasks({ tasks, initialDisplayCount = 3, staffName }: RecentTasksProps) {
   const [showAll, setShowAll] = useState(false)
 
-  // Sort tasks by creation date (most recent first) and due date priority
   const sortedTasks = [...tasks].sort((a, b) => {
-    // First prioritize overdue tasks
     const aOverdue = a.dueDate && isPast(new Date(a.dueDate)) && a.status !== TaskStatus.DONE
     const bOverdue = b.dueDate && isPast(new Date(b.dueDate)) && b.status !== TaskStatus.DONE
     
     if (aOverdue && !bOverdue) return -1
     if (!aOverdue && bOverdue) return 1
     
-    // Then sort by creation date (most recent first)
     const aDate = new Date(a.createdAt || a.dueDate || 0)
     const bDate = new Date(b.createdAt || b.dueDate || 0)
     return bDate.getTime() - aDate.getTime()
