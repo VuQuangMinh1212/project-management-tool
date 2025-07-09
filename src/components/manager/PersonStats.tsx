@@ -32,30 +32,24 @@ interface PersonStats {
 }
 
 export function PersonStats({ user, tasks, plans, dateRange }: PersonStatsProps) {
-  // Remove all the date range selection logic since it's controlled by parent
   const currentDateRange = dateRange || getDateRangeForPeriod("month", 0)
 
-  // Get user's plan IDs
   const userPlanIds = useMemo(() => {
     return plans
       .filter(plan => plan.user_id === user.id)
       .map(plan => plan.id)
   }, [plans, user.id])
 
-  // Filter tasks for the selected user and date range
   const userTasks = useMemo(() => {
     return tasks.filter(task => {
-      // Check if task belongs to user (through plans)
       const belongsToUser = userPlanIds.includes(task.plan_id)
       
-      // Check if task is within date range
       const isInRange = task.created_at ? isDateInRange(task.created_at, currentDateRange) : false
       
       return belongsToUser && isInRange
     })
   }, [tasks, userPlanIds, currentDateRange])
 
-  // Calculate statistics for the filtered tasks
   const stats = useMemo((): PersonStats => {
     const totalTasks = userTasks.length
     const completedTasks = userTasks.filter(task => task.status === "done").length
@@ -68,11 +62,9 @@ export function PersonStats({ user, tasks, plans, dateRange }: PersonStatsProps)
     
     const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
     
-    // Calculate estimated hours (assuming 8 hours per task on average)
     const totalHours = totalTasks * 8
     const averageTaskTime = completedTasks > 0 ? totalHours / completedTasks : 0
     
-    // Count overdue tasks
     const now = new Date()
     const overdueTasks = userTasks.filter(task => 
       task.end_date && 
@@ -93,11 +85,9 @@ export function PersonStats({ user, tasks, plans, dateRange }: PersonStatsProps)
     }
   }, [userTasks])
 
-  // Calculate trends by comparing with previous period - simplified without dynamic period selection
   const previousPeriodStats = useMemo(() => {
     if (!dateRange) return null
     
-    // Use a simple previous month comparison
     const previousRange = getDateRangeForPeriod("month", 1)
     const previousTasks = tasks.filter(task => {
       const belongsToUser = userPlanIds.includes(task.plan_id)

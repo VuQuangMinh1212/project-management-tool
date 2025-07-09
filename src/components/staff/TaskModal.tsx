@@ -90,7 +90,6 @@ export function TaskModal({
   const isEditing = !!task;
   const isManager = userRole === "manager";
   
-  // Check if this is an approved task that staff can only update status/notes for
   const isApprovedTaskForStaff = !isManager && task && 
     (task.status === TaskStatus.TODO || 
      task.status === TaskStatus.IN_PROGRESS || 
@@ -100,17 +99,14 @@ export function TaskModal({
      task.status === TaskStatus.CANCELLED ||
      task.status === TaskStatus.OVERDUE);
   
-  // Check permissions based on task status and user role
   const canEdit = () => {
-    if (!task) return true; // New task
-    if (isManager) return true; // Managers can always edit
+    if (!task) return true;
+    if (isManager) return true;
     
-    // Staff permissions
     if (task.status === TaskStatus.DRAFT) return true;
     if (task.status === TaskStatus.REJECTED) return true;
     if (task.status === TaskStatus.PENDING_APPROVAL) return false;
     
-    // For approved tasks, staff can only use the status update interface
     if (isApprovedTaskForStaff) return false;
     
     return false;
@@ -120,7 +116,6 @@ export function TaskModal({
     if (!task) return false;
     if (isManager) return true;
     
-    // Staff can only update status for approved tasks
     return isApprovedTaskForStaff;
   };
 
@@ -128,26 +123,22 @@ export function TaskModal({
     if (!task) return [];
     if (isManager) {
       if (task.status === TaskStatus.PENDING_APPROVAL) {
-        return [TaskStatus.IN_PROGRESS, TaskStatus.REJECTED]; // Manager approves directly to IN_PROGRESS
+        return [TaskStatus.IN_PROGRESS, TaskStatus.REJECTED];
       }
       return Object.values(TaskStatus);
     }
     
-    // Staff status transitions after approval
     switch (task.status) {
       case TaskStatus.TODO:
         return [TaskStatus.TODO, TaskStatus.IN_PROGRESS];
       case TaskStatus.IN_PROGRESS:
-        // After approval (IN_PROGRESS), staff can only transition to finished, delayed, or cancelled
         return [TaskStatus.IN_PROGRESS, TaskStatus.FINISHED, TaskStatus.DELAYED, TaskStatus.CANCELLED];
       case TaskStatus.OVERDUE:
-        // Overdue tasks can be updated to in_progress, finished, delayed, or cancelled
         return [TaskStatus.OVERDUE, TaskStatus.IN_PROGRESS, TaskStatus.FINISHED, TaskStatus.DELAYED, TaskStatus.CANCELLED];
       case TaskStatus.FINISHED:
       case TaskStatus.DELAYED:
       case TaskStatus.CANCELLED:
       case TaskStatus.DONE:
-        // Final states - no further transitions allowed
         return [task.status];
       default:
         return [];

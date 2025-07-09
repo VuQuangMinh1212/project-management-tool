@@ -22,7 +22,6 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
     (task) => task.status === TaskStatus.OVERDUE || isTaskOverdue(task)
   )
 
-  // Group overdue tasks by assignee
   const overdueByMember = overdueTasks.reduce((acc, task) => {
     const memberKey = task.assigneeName || "Unassigned"
     if (!acc[memberKey]) {
@@ -46,7 +45,6 @@ export function OverdueTasks({ tasks }: OverdueTasksProps) {
 
   const selectedMemberData = selectedMember ? overdueByMember[selectedMember] : null
   const selectedMemberTasks = selectedMemberData?.tasks.sort((a, b) => {
-    // Sort by how many days overdue (most overdue first)
     const aDays = Math.abs(differenceInDays(new Date(), new Date(a.dueDate!)))
     const bDays = Math.abs(differenceInDays(new Date(), new Date(b.dueDate!)))
     return bDays - aDays

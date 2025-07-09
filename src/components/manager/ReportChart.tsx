@@ -48,11 +48,10 @@ const PRIORITY_COLORS = {
 
 export function ReportChart({ tasks, type = "status", excludeStatuses = [] }: ReportChartProps) {
   if (type === "status") {
-    // Filter out excluded statuses
     const statusesToShow = Object.values(TaskStatus).filter(status => !excludeStatuses.includes(status));
     
     const statusData = statusesToShow.map((status) => ({
-      name: TASK_STATUS_LABELS[status], // Use TASK_STATUS_LABELS
+      name: TASK_STATUS_LABELS[status],
       value: tasks.filter((task) => task.status === status).length,
       color: COLORS[status],
     }));

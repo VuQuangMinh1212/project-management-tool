@@ -26,12 +26,11 @@ interface TaskBoardProps {
   onCreateMultiple?: (
     tasks: Omit<Task, "id" | "createdAt" | "updatedAt">[]
   ) => void;
-  // Remove search/filter state from TaskBoard since it's controlled by parent
   searchTerm?: string;
   selectedFilters?: Record<string, string[]>;
-  showHeader?: boolean; // Control whether to show the header section
-  statusFilter?: string; // New prop for status filtering
-  excludeStatuses?: TaskStatus[]; // New prop to exclude certain statuses from display
+  showHeader?: boolean;
+  statusFilter?: string;
+  excludeStatuses?: TaskStatus[];
 }
 
 export function TaskBoard({
@@ -50,19 +49,15 @@ export function TaskBoard({
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // Sync local tasks with propTasks when prop changes
   useEffect(() => {
     console.log("Syncing tasks with propTasks:", propTasks);
-    // Process tasks to automatically set overdue status
     const processedTasks = processTasksStatus(propTasks);
     setTasks(processedTasks);
   }, [propTasks]);
 
-  // Filter tasks based on search term and selected lọc (passed from parent)
   const filteredTasks = useMemo(() => {
     let filtered = tasks;
 
-    // Apply search filter
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter(task => 
@@ -74,7 +69,6 @@ export function TaskBoard({
       );
     }
 
-    // Apply selected lọc
     Object.entries(selectedFilters).forEach(([filterType, values]) => {
       if (values.length > 0) {
         filtered = filtered.filter(task => {
@@ -116,28 +110,21 @@ export function TaskBoard({
     return grouped;
   }, [filteredTasks]);
 
-  // Get columns to display based on status filter
   const columnsToShow = useMemo(() => {
-    // Check if there are specific status lọc in selectedFilters
     const statusFilters = selectedFilters?.status || [];
     
     let statusesToShow: TaskStatus[];
     
     if (statusFilter === "all" && statusFilters.length === 0) {
-      // Show all columns when no status filter is applied
       statusesToShow = Object.values(TaskStatus);
     } else if (statusFilters.length > 0) {
-      // Use selectedFilters.status if available (multiple status lọc)
       statusesToShow = Object.values(TaskStatus).filter(status => statusFilters.includes(status));
     } else if (statusFilter !== "all") {
-      // Use single statusFilter if no selectedFilters.status
       statusesToShow = Object.values(TaskStatus).filter(status => status === statusFilter);
     } else {
-      // Fallback to all columns
       statusesToShow = Object.values(TaskStatus);
     }
 
-    // Filter out excluded statuses
     return statusesToShow.filter(status => !excludeStatuses.includes(status));
   }, [statusFilter, selectedFilters, excludeStatuses]);
 

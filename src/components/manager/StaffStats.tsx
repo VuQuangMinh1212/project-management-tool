@@ -12,7 +12,6 @@ interface StaffStatsProps {
 }
 
 export function StaffStats({ staffMember, tasks }: StaffStatsProps) {
-  // Filter tasks for this specific staff member
   const staffTasks = tasks.filter((task) => task.assigneeId === staffMember.id)
   
   const totalTasks = staffTasks.length

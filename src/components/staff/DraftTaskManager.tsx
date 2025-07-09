@@ -56,7 +56,6 @@ export function DraftTaskManager({
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Group draft tasks by week
   const tasksByWeek = draftTasks.reduce((acc, task) => {
     const week = task.weekSubmittedFor || getCurrentWeek();
     if (!acc[week]) {
@@ -91,7 +90,6 @@ export function DraftTaskManager({
 
     setIsSubmitting(true);
     try {
-      // Get the week from the first selected task
       const firstTask = draftTasks.find(t => t.id === selectedTasks[0]);
       const week = firstTask?.weekSubmittedFor || getCurrentWeek();
       

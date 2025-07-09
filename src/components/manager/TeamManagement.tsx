@@ -133,11 +133,9 @@ export function TeamManagement() {
   const [customDateRange, setCustomDateRange] = useState<CalendarDateRange | undefined>()
   const [isCustomDateOpen, setIsCustomDateOpen] = useState(false)
 
-  // Get team members and tasks
   const teamMembers: TeamMember[] = getLegacyTeamMembers()
   const allTasks: Task[] = getLegacyTasks()
 
-  // Search functionality for team members (focused on member names)
   const searchSuggestions = useMemo(() => {
     return teamMembers.map(member => ({
       value: member.name,
@@ -147,7 +145,6 @@ export function TeamManagement() {
     }))
   }, [teamMembers])
 
-  // Filter team members based on search (name-focused)
   const filteredTeamMembers = useMemo(() => {
     if (!searchQuery.trim()) return teamMembers
     
@@ -157,10 +154,8 @@ export function TeamManagement() {
     )
   }, [teamMembers, searchQuery])
 
-  // Get selected staff member
   const selectedStaff = teamMembers.find(member => member.id === selectedStaffId)
 
-  // Get current date range
   const currentDateRange = useMemo(() => {
     if (timeRangeFilter === "custom" && customDateRange) {
       return customDateRange
@@ -169,7 +164,6 @@ export function TeamManagement() {
     return filter?.getRange() || { from: new Date(), to: new Date() }
   }, [timeRangeFilter, customDateRange])
 
-  // Filter tasks by date range
   const filteredTasks = useMemo(() => {
     if (!currentDateRange?.from || !currentDateRange?.to) return allTasks
     
@@ -179,7 +173,6 @@ export function TeamManagement() {
     })
   }, [allTasks, currentDateRange])
 
-  // Calculate team stats for the selected period
   const teamStats = useMemo(() => {
     const stats = {
       totalTasks: filteredTasks.length,
