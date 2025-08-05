@@ -33,8 +33,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        dockerImage.push()
                         dockerImage.push('latest')
+                        sh "docker image rm ${DOCKER_IMAGE}:${env.BUILD_ID} || true"
                     }
                 }
             }
@@ -45,6 +45,13 @@ pipeline {
                     docker stop project-management-tool || true
                     docker rm project-management-tool || true
                     docker run -d --name project-management-tool -p 3003:3000 --restart=unless-stopped ${DOCKER_IMAGE}:latest
+                '''
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                sh '''
+                    docker image prune -f
                 '''
             }
         }
