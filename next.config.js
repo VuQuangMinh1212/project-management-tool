@@ -16,7 +16,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+   // CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
 }
 

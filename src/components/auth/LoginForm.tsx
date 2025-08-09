@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,33 +19,75 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { ROUTES } from "@/constants/routes";
 import { UserRole } from "@/types/auth";
+import { AuthStatusIndicator } from "./AuthStatusIndicator";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Vui lòng nhập tên người dùng hoặc email"),
   password: z.string().min(1, "Mật khẩu là bắt buộc"),
+  rememberMe: z.boolean().optional(),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
   const { login, isLoading } = useAuth();
 
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: localStorage.getItem('remembered_email') || '',
+      password: localStorage.getItem('remembered_password') || '',
+      rememberMe: localStorage.getItem('remember_me') === 'true',
+    }
+  });
+
+  // Load saved credentials on component mount
+  useState(() => {
+    const savedEmail = localStorage.getItem('remembered_email');
+    const savedPassword = localStorage.getItem('remembered_password');
+    const savedRememberMe = localStorage.getItem('remember_me') === 'true';
+    
+    if (savedEmail) setValue('email', savedEmail);
+    if (savedPassword) setValue('password', savedPassword);
+    if (savedRememberMe) {
+      setValue('rememberMe', true);
+      setRememberMe(true);
+    }
   });
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data);
+      if (data.rememberMe) {
+        localStorage.setItem('remembered_email', data.email);
+        localStorage.setItem('remembered_password', data.password);
+        localStorage.setItem('remember_me', 'true');
+      } else {
+        localStorage.removeItem('remembered_email');
+        localStorage.removeItem('remembered_password');
+        localStorage.removeItem('remember_me');
+      }
+
+      await login({
+        email: data.email,
+        password: data.password,
+        rememberMe: data.rememberMe
+      });
+
+      // Show success message
+      toast.success("Đăng nhập thành công!");
 
       // Wait a moment for state to update
       setTimeout(() => {
@@ -57,8 +100,15 @@ export function LoginForm() {
           router.push(ROUTES.STAFF.DASHBOARD);
         }
       }, 100);
-    } catch (error) {
-      // Error is handled in the useAuth hook
+    } catch (error: any) {
+      // Get error message from useAuth store
+      const { error: authError } = useAuth.getState()
+    
+      if (authError) {
+        toast.error(authError)
+      } else {
+        toast.error("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.")
+      }
     }
   };
 
@@ -71,6 +121,7 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <AuthStatusIndicator />
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Tên người dùng hoặc Email</Label>
@@ -113,6 +164,23 @@ export function LoginForm() {
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
             )}
+          </div>
+
+          <div className="flex items-center space-x-2">
+                        <Checkbox
+              id="rememberMe"
+              checked={rememberMe}
+              onCheckedChange={(checked) => {
+                setRememberMe(checked as boolean);
+                setValue('rememberMe', checked as boolean);
+              }}
+            />
+            <Label 
+              htmlFor="rememberMe" 
+              className="text-sm font-normal cursor-pointer"
+            >
+              Nhớ mật khẩu
+            </Label>
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>

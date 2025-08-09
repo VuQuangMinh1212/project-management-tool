@@ -7,23 +7,22 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Link from "next/link"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
+import toast from "react-hot-toast"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/hooks/auth/useAuth"
 import { ROUTES } from "@/constants/routes"
-import { UserRole } from "@/types/auth"
 
 const registerSchema = z
   .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    firstName: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
+    lastName: z.string().min(2, "Họ phải có ít nhất 2 ký tự"),
     email: z.string().email("Vui lòng nhập địa chỉ email hợp lệ"),
     password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
     confirmPassword: z.string(),
-    role: z.nativeEnum(UserRole),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Mật khẩu không khớp",
@@ -41,7 +40,6 @@ export function RegisterForm() {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -50,16 +48,24 @@ export function RegisterForm() {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       const { confirmPassword, ...registerData } = data
+      // Role defaults to employee on backend, no need to send it
       await registerUser(registerData)
 
-      // Redirect based on user role
-      if (data.role === UserRole.MANAGER) {
-        router.push(ROUTES.MANAGER.DASHBOARD)
+      // Show success message
+      toast.success("Đăng ký thành công! Chào mừng bạn đến với hệ thống.")
+      
+      // All new registrations are employees, redirect to staff dashboard
+      router.push(ROUTES.STAFF.DASHBOARD)
+    } catch (error: any) {
+      // Get error message from useAuth store
+      const { error: authError } = useAuth.getState()
+      
+      // Show error toast with Vietnamese message
+      if (authError) {
+        toast.error(authError)
       } else {
-        router.push(ROUTES.STAFF.DASHBOARD)
+        toast.error("Đăng ký thất bại. Vui lòng thử lại.")
       }
-    } catch (error) {
-      // Error is handled in the useAuth hook
     }
   }
 
@@ -71,15 +77,28 @@ export function RegisterForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Họ và Tên</Label>
-            <Input
-              id="name"
-              placeholder="John Doe"
-              {...register("name")}
-              className={errors.name ? "border-red-500" : ""}
-            />
-            {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">Tên</Label>
+              <Input
+                id="firstName"
+                placeholder="John"
+                {...register("firstName")}
+                className={errors.firstName ? "border-red-500" : ""}
+              />
+              {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Họ</Label>
+              <Input
+                id="lastName"
+                placeholder="Doe"
+                {...register("lastName")}
+                className={errors.lastName ? "border-red-500" : ""}
+              />
+              {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -92,20 +111,6 @@ export function RegisterForm() {
               className={errors.email ? "border-red-500" : ""}
             />
             {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="role">Vai trò</Label>
-            <Select onValueChange={(value) => setValue("role", value as UserRole)}>
-              <SelectTrigger className={errors.role ? "border-red-500" : ""}>
-                <SelectValue placeholder="Chọn vai trò của bạn" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={UserRole.STAFF}>Nhân viên</SelectItem>
-                <SelectItem value={UserRole.MANAGER}>Quản lý</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
           </div>
 
           <div className="space-y-2">

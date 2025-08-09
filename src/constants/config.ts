@@ -6,7 +6,7 @@ export const APP_CONFIG = {
 
   // API Configuration
   api: {
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api",
+    baseUrl: process.env.API_URL || "http://localhost:3001/api",
     timeout: 10000,
   },
 
@@ -26,14 +26,20 @@ export const APP_CONFIG = {
   // File Upload
   fileUpload: {
     maxSize: 10 * 1024 * 1024, // 10MB
-    allowedTypes: ["image/jpeg", "image/png", "image/gif", "application/pdf", "text/plain"],
+    allowedTypes: [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "application/pdf",
+      "text/plain",
+    ],
   },
 
   // Theme
   theme: {
     defaultMode: "light" as "light" | "dark" | "system",
   },
-} as const
+} as const;
 
 export const ROUTES_CONFIG = {
   redirectAfterLogin: {
@@ -43,4 +49,4 @@ export const ROUTES_CONFIG = {
   },
   publicRoutes: ["/login", "/register"],
   protectedRoutes: ["/staff", "/manager", "/admin"],
-} as const
+} as const;

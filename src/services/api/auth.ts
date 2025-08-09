@@ -1,32 +1,29 @@
-import { apiClient } from "@/lib/api/client"
-import type { AuthResponse, LoginCredentials, RegisterCredentials, User } from "@/types/auth"
+import { apiClient } from "@/lib/api/client";
+import type {
+  AuthResponse,
+  LoginCredentials,
+  RegisterData,
+  User,
+} from "@/types/auth";
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    return apiClient.post<AuthResponse>("/auth/login", credentials)
+    return apiClient.post<AuthResponse>("/auth/login", credentials);
   },
 
-  async register(credentials: RegisterCredentials): Promise<AuthResponse> {
-    return apiClient.post<AuthResponse>("/auth/register", credentials)
+  async register(data: RegisterData): Promise<AuthResponse> {
+    return apiClient.post<AuthResponse>("/auth/register", data);
   },
 
   async logout(): Promise<void> {
-    return apiClient.post("/auth/logout")
-  },
-
-  async refreshToken(refreshToken: string): Promise<{ token: string }> {
-    return apiClient.post("/auth/refresh", { refreshToken })
+    return apiClient.post("/auth/logout");
   },
 
   async getCurrentUser(): Promise<User> {
-    return apiClient.get<User>("/auth/me")
+    return apiClient.get<User>("/auth/profile");
   },
 
   async updateProfile(data: Partial<User>): Promise<User> {
-    return apiClient.patch<User>("/auth/profile", data)
+    return apiClient.patch<User>("/auth/profile", data);
   },
-
-  async changePassword(data: { currentPassword: string; newPassword: string }): Promise<void> {
-    return apiClient.post("/auth/change-password", data)
-  },
-}
+};
