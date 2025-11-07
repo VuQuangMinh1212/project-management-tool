@@ -26,22 +26,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Create .env.production
-        run: |
-          cat > .env.production << EOF
-          NODE_ENV=production
-          NEXT_PUBLIC_API_URL=https://backend.quangminhvu.id.vn/api/v1
-          NEXT_PUBLIC_SOCKET_URL=https://backend.quangminhvu.id.vn
-          PORT=3031
-          HOSTNAME=0.0.0.0
-          EOF
-
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: mv1212/projectmanagementfe:latest
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://backend.quangminhvu.id.vn/api/v1
+            NEXT_PUBLIC_SOCKET_URL=https://backend.quangminhvu.id.vn
           cache-from: type=registry,ref=mv1212/projectmanagementfe:latest
           cache-to: type=inline
 
@@ -67,13 +60,6 @@ jobs:
           ssh -p 2250 quangminh@quangminh1212.ddns.net << EOF
             set -e
             cd /home/quangminh/projectmanagementfe
-            cat > .env.production << EOL
-          NODE_ENV=production
-          NEXT_PUBLIC_API_URL=https://backend.quangminhvu.id.vn/api/v1
-          NEXT_PUBLIC_SOCKET_URL=https://backend.quangminhvu.id.vn
-          PORT=3031
-          HOSTNAME=0.0.0.0
-          EOL
             echo "${{ secrets.SSH_PASS }}" | sudo -S docker compose pull projectmanagementfe
             echo "${{ secrets.SSH_PASS }}" | sudo -S docker compose up -d
           EOF
