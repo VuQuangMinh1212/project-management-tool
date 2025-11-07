@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,36 +48,39 @@ export function LoginForm() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: localStorage.getItem('remembered_email') || '',
-      password: localStorage.getItem('remembered_password') || '',
-      rememberMe: localStorage.getItem('remember_me') === 'true',
+      email: '',
+      password: '',
+      rememberMe: false,
     }
   });
 
-  // Load saved credentials on component mount
-  useState(() => {
-    const savedEmail = localStorage.getItem('remembered_email');
-    const savedPassword = localStorage.getItem('remembered_password');
-    const savedRememberMe = localStorage.getItem('remember_me') === 'true';
-    
-    if (savedEmail) setValue('email', savedEmail);
-    if (savedPassword) setValue('password', savedPassword);
-    if (savedRememberMe) {
-      setValue('rememberMe', true);
-      setRememberMe(true);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedEmail = localStorage.getItem('remembered_email');
+      const savedPassword = localStorage.getItem('remembered_password');
+      const savedRememberMe = localStorage.getItem('remember_me') === 'true';
+      
+      if (savedEmail) setValue('email', savedEmail);
+      if (savedPassword) setValue('password', savedPassword);
+      if (savedRememberMe) {
+        setValue('rememberMe', true);
+        setRememberMe(true);
+      }
     }
-  });
+  }, [setValue]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      if (data.rememberMe) {
-        localStorage.setItem('remembered_email', data.email);
-        localStorage.setItem('remembered_password', data.password);
-        localStorage.setItem('remember_me', 'true');
-      } else {
-        localStorage.removeItem('remembered_email');
-        localStorage.removeItem('remembered_password');
-        localStorage.removeItem('remember_me');
+      if (typeof window !== 'undefined') {
+        if (data.rememberMe) {
+          localStorage.setItem('remembered_email', data.email);
+          localStorage.setItem('remembered_password', data.password);
+          localStorage.setItem('remember_me', 'true');
+        } else {
+          localStorage.removeItem('remembered_email');
+          localStorage.removeItem('remembered_password');
+          localStorage.removeItem('remember_me');
+        }
       }
 
       await login({
@@ -86,10 +89,8 @@ export function LoginForm() {
         rememberMe: data.rememberMe
       });
 
-      // Show success message
       toast.success("Đăng nhập thành công!");
 
-      // Wait a moment for state to update
       setTimeout(() => {
         const user = useAuth.getState().user;
         console.log("Redirecting for role:", user?.role);

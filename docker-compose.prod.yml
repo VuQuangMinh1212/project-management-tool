@@ -1,0 +1,18 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3031:3031"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://backend.quangminhvu.id.vn/api/v1
+      - NEXT_PUBLIC_SOCKET_URL=https://backend.quangminhvu.id.vn
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge

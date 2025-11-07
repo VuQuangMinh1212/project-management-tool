@@ -35,7 +35,6 @@ export function ProtectedLayout({ children, requiredRole }: ProtectedLayoutProps
     return null
   }
 
-  // Role-based access control
   if (requiredRole && user.role !== requiredRole && user.role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
