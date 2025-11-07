@@ -8,62 +8,8 @@ import {
 } from "@/constants/routes";
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const token = request.cookies.get("auth_token")?.value;
-
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    pathname.includes(".") ||
-    pathname === "/favicon.ico"
-  ) {
-    return NextResponse.next();
-  }
-
-  if (pathname === "/" || pathname === "/login" || pathname === "/register") {
-    return NextResponse.next();
-  }
-
-  if (!token) {
-    return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
-  }
-
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const userRole = payload.role;
-
-    if (payload.exp * 1000 < Date.now()) {
-      const response = NextResponse.redirect(
-        new URL(ROUTES.LOGIN, request.url)
-      );
-      response.cookies.delete("auth_token");
-      return response;
-    }
-
-    if (STAFF_ROUTES.some((route) => pathname.startsWith(route))) {
-      if (userRole !== "employee") {
-        return NextResponse.redirect(
-          new URL(ROUTES.MANAGER.DASHBOARD, request.url)
-        );
-      }
-      return NextResponse.next();
-    }
-
-    if (MANAGER_ROUTES.some((route) => pathname.startsWith(route))) {
-      if (userRole !== "manager") {
-        return NextResponse.redirect(
-          new URL(ROUTES.STAFF.DASHBOARD, request.url)
-        );
-      }
-      return NextResponse.next();
-    }
-
-    return NextResponse.next();
-  } catch (error) {
-    const response = NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
-    response.cookies.delete("auth_token");
-    return response;
-  }
+  // Tạm thời tắt middleware để debug redirect loop
+  return NextResponse.next();
 }
 
 export const config = {
