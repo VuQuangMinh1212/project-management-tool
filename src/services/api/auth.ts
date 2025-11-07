@@ -16,7 +16,7 @@ export const authService = {
   },
 
   async refreshToken(refreshToken: string): Promise<AuthResponse> {
-    return apiClient.post<AuthResponse>("/auth/refresh", { refreshToken });
+    return apiClient.post<AuthResponse>("/auth/refresh", { refresh_token: refreshToken });
   },
 
   async logout(): Promise<void> {
