@@ -11,15 +11,16 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("auth_token")?.value;
 
-  if (pathname === "/" || pathname === "/login" || pathname === "/register") {
-    return NextResponse.next();
-  }
-
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname.includes(".")
+    pathname.includes(".") ||
+    pathname === "/favicon.ico"
   ) {
+    return NextResponse.next();
+  }
+
+  if (pathname === "/" || pathname === "/login" || pathname === "/register") {
     return NextResponse.next();
   }
 
@@ -32,30 +33,36 @@ export function middleware(request: NextRequest) {
     const userRole = payload.role;
 
     if (payload.exp * 1000 < Date.now()) {
-      return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+      const response = NextResponse.redirect(
+        new URL(ROUTES.LOGIN, request.url)
+      );
+      response.cookies.delete("auth_token");
+      return response;
     }
 
-    if (
-      STAFF_ROUTES.some((route) => pathname.startsWith(route)) &&
-      userRole !== "employee"
-    ) {
-      return NextResponse.redirect(
-        new URL(ROUTES.MANAGER.DASHBOARD, request.url)
-      );
+    if (STAFF_ROUTES.some((route) => pathname.startsWith(route))) {
+      if (userRole !== "employee") {
+        return NextResponse.redirect(
+          new URL(ROUTES.MANAGER.DASHBOARD, request.url)
+        );
+      }
+      return NextResponse.next();
     }
 
-    if (
-      MANAGER_ROUTES.some((route) => pathname.startsWith(route)) &&
-      userRole !== "manager"
-    ) {
-      return NextResponse.redirect(
-        new URL(ROUTES.STAFF.DASHBOARD, request.url)
-      );
+    if (MANAGER_ROUTES.some((route) => pathname.startsWith(route))) {
+      if (userRole !== "manager") {
+        return NextResponse.redirect(
+          new URL(ROUTES.STAFF.DASHBOARD, request.url)
+        );
+      }
+      return NextResponse.next();
     }
 
     return NextResponse.next();
   } catch (error) {
-    return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+    const response = NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+    response.cookies.delete("auth_token");
+    return response;
   }
 }
 
