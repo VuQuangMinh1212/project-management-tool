@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { ROUTES } from "@/constants/routes";
 import { UserRole } from "@/types/auth";
@@ -123,72 +124,86 @@ export function LoginForm() {
       </CardHeader>
       <CardContent>
         <AuthStatusIndicator />
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Tên người dùng hoặc Email</Label>
-            <Input
-              id="email"
-              type="text"
-              placeholder="staff or manager"
-              {...register("email")}
-              className={errors.email ? "border-red-500" : ""}
-            />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Mật khẩu</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Nhập mật khẩu của bạn"
-                {...register("password")}
-                className={errors.password ? "border-red-500 pr-10" : "pr-10"}
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
+{isLoading ? (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-10 w-full" />
             </div>
-            {errors.password && (
-              <p className="text-sm text-red-500">{errors.password.message}</p>
-            )}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <Skeleton className="h-6 w-24 ml-auto" />
+            <Skeleton className="h-10 w-full" />
           </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Tên người dùng hoặc Email</Label>
+              <Input
+                id="email"
+                type="text"
+                placeholder="staff or manager"
+                {...register("email")}
+                className={errors.email ? "border-red-500" : ""}
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
+            </div>
 
-          <div className="flex items-center space-x-2">
-                        <Checkbox
-              id="rememberMe"
-              checked={rememberMe}
-              onCheckedChange={(checked) => {
-                setRememberMe(checked as boolean);
-                setValue('rememberMe', checked as boolean);
-              }}
-            />
-            <Label 
-              htmlFor="rememberMe" 
-              className="text-sm font-normal cursor-pointer"
-            >
-              Nhớ mật khẩu
-            </Label>
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Mật khẩu</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Nhập mật khẩu của bạn"
+                  {...register("password")}
+                  className={errors.password ? "border-red-500 pr-10" : "pr-10"}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password.message}</p>
+              )}
+            </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Đăng nhập
-          </Button>
-        </form>
+            <div className="flex items-center justify-end space-x-2">
+              <Label 
+                htmlFor="rememberMe" 
+                className="text-sm font-normal cursor-pointer"
+              >
+                Nhớ mật khẩu
+              </Label>
+              <Checkbox
+                id="rememberMe"
+                checked={rememberMe}
+                onCheckedChange={(checked) => {
+                  setRememberMe(checked as boolean);
+                  setValue('rememberMe', checked as boolean);
+                }}
+              />
+            </div>
+
+            <Button type="submit" className="w-full">
+              Đăng nhập
+            </Button>
+          </form>
+        )}
 
         <div className="mt-4 text-center text-sm">
           {"Chưa có tài khoản? "}
