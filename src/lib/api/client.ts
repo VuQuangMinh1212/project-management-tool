@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
-import { tokenStorage } from "@/lib/auth/token";
+import { enhancedTokenStorage } from "@/lib/auth/enhanced-token-storage";
+import { tokenRefreshService } from "@/lib/auth/token-refresh";
 import toast from "react-hot-toast";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/v1";
@@ -10,7 +11,7 @@ class ApiClient {
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
-      timeout: 5000, // Reduced from 10s to 5s for faster response
+      timeout: 10000,
       headers: {
         "Content-Type": "application/json",
       },
@@ -20,11 +21,10 @@ class ApiClient {
   }
 
   private setupInterceptors() {
-    // Request interceptor
     this.client.interceptors.request.use(
-      (config) => {
-        const token = tokenStorage.getToken();
-        if (token && !tokenStorage.isTokenExpired(token)) {
+      async (config) => {
+        const token = await tokenRefreshService.getValidAccessToken();
+        if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
@@ -32,7 +32,6 @@ class ApiClient {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
@@ -41,30 +40,21 @@ class ApiClient {
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
-          try {
-            const refreshToken = tokenStorage.getRefreshToken();
-            if (refreshToken) {
-              const response = await this.client.post("/auth/refresh", {
-                refreshToken,
-              });
-
-              const { token } = response.data;
-              tokenStorage.setToken(token);
-
-              return this.client(originalRequest);
-            }
-          } catch (refreshError) {
-            tokenStorage.removeTokens();
+          const newToken = await tokenRefreshService.refreshAccessToken();
+          if (newToken) {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return this.client(originalRequest);
+          } else {
+            enhancedTokenStorage.clearTokens();
             window.location.href = "/login";
-            return Promise.reject(refreshError);
+            return Promise.reject(error);
           }
         }
 
-        // Handle other errors
         if (error.response?.status >= 500) {
-          toast.error("Server error. Please try again later.");
+          toast.error("Lỗi máy chủ. Vui lòng thử lại sau.");
         } else if (error.response?.status === 403) {
-          toast.error("You do not have permission to perform this action.");
+          toast.error("Bạn không có quyền thực hiện hành động này.");
         }
 
         return Promise.reject(error);

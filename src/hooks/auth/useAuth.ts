@@ -50,10 +50,12 @@ export const useAuth = create<AuthStore>()(
             updatedAt: new Date().toISOString(),
           };
 
-          // Use enhanced token storage
-          enhancedTokenStorage.saveTokens(response.access_token, user, {
-            rememberMe,
-          });
+          enhancedTokenStorage.saveTokens(
+            response.access_token,
+            response.refresh_token,
+            user,
+            { rememberMe }
+          );
 
           set({
             user,
@@ -106,10 +108,12 @@ export const useAuth = create<AuthStore>()(
             updatedAt: new Date().toISOString(),
           };
 
-          // Use enhanced token storage for registration
-          enhancedTokenStorage.saveTokens(response.access_token, user, {
-            rememberMe: false,
-          });
+          enhancedTokenStorage.saveTokens(
+            response.access_token,
+            response.refresh_token,
+            user,
+            { rememberMe: false }
+          );
 
           set({
             user,
@@ -184,11 +188,10 @@ export const useAuth = create<AuthStore>()(
           return;
         }
 
-        const token = localStorage.getItem("auth_token");
+        const token = enhancedTokenStorage.getAccessToken();
         const storedUser = enhancedTokenStorage.getStoredUser();
 
-        // If we have stored user data, use it directly for faster loading
-        if (storedUser && token) {
+        if (storedUser && token && !enhancedTokenStorage.isTokenExpired(token)) {
           set({
             user: storedUser,
             token,
@@ -198,7 +201,6 @@ export const useAuth = create<AuthStore>()(
           return;
         }
 
-        // Only fetch from API if we don't have user data
         if (token) {
           set({ isLoading: true });
 
@@ -215,8 +217,12 @@ export const useAuth = create<AuthStore>()(
               name: `${user.firstName} ${user.lastName}`,
             };
 
-            // Update stored user info
-            localStorage.setItem("user_info", JSON.stringify(fullUser));
+            enhancedTokenStorage.saveTokens(
+              token,
+              enhancedTokenStorage.getRefreshToken() || "",
+              fullUser,
+              { rememberMe: enhancedTokenStorage.getRememberMeStatus() }
+            );
 
             set({
               user: fullUser,

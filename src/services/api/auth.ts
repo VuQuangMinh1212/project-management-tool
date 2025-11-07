@@ -15,6 +15,10 @@ export const authService = {
     return apiClient.post<AuthResponse>("/auth/register", data);
   },
 
+  async refreshToken(refreshToken: string): Promise<AuthResponse> {
+    return apiClient.post<AuthResponse>("/auth/refresh", { refreshToken });
+  },
+
   async logout(): Promise<void> {
     return apiClient.post("/auth/logout");
   },
