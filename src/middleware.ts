@@ -10,13 +10,12 @@ import {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("auth_token")?.value;
-  
-  // Debug logging for production troubleshooting
+
   if (pathname.startsWith("/manager") || pathname.startsWith("/staff")) {
     console.log("🔍 Middleware Debug:", {
       pathname,
       hasToken: !!token,
-      tokenLength: token ? token.length : 0
+      tokenLength: token ? token.length : 0,
     });
   }
 
@@ -34,7 +33,6 @@ export function middleware(request: NextRequest) {
   }
 
   if (!token) {
-    // Prevent redirect loop by checking if already on login page
     if (pathname === "/login") {
       return NextResponse.next();
     }
