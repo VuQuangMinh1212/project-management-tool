@@ -1,8 +1,6 @@
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  projectmanagementfe:
+    image: mv1212/projectmanagementfe:latest
     ports:
       - "3031:3031"
     environment:
