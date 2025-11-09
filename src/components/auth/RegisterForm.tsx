@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Link from "next/link"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
-import toast from "react-hot-toast"
+import { useModernToast } from "@/components/ui/modern-toast-provider"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -36,6 +36,7 @@ export function RegisterForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const router = useRouter()
   const { register: registerUser, isLoading } = useAuth()
+  const toast = useModernToast()
 
   const {
     register,

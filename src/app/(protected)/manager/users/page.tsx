@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import toast from "react-hot-toast";
+import { useModernToast } from "@/components/ui/modern-toast-provider";
 import { userService } from "@/services/api/users";
 import type { User } from "@/types/auth";
 
@@ -47,6 +47,7 @@ const roleColors = {
 
 export default function ManagerUsersPage() {
   const { user } = useAuth();
+  const toast = useModernToast();
   
   if (!user || user.role !== "manager") {
     redirect("/not-found");

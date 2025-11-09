@@ -43,7 +43,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import toast from "react-hot-toast";
+import { useModernToast } from "@/components/ui/modern-toast-provider";
 import { userService } from "@/services/api/users";
 import type { User } from "@/types/auth";
 
@@ -71,6 +71,7 @@ type CreateUserForm = z.infer<typeof createUserSchema>;
 
 export default function AdminUsersPage() {
   const { user } = useAuth();
+  const toast = useModernToast();
   
   if (!user || user.role !== "admin") {
     redirect("/not-found");
