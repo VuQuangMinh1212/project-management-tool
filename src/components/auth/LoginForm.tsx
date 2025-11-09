@@ -24,7 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { ROUTES } from "@/constants/routes";
 import { UserRole } from "@/types/auth";
-import { AuthStatusIndicator } from "./AuthStatusIndicator";
+
 
 const loginSchema = z.object({
   email: z.string().min(1, "Vui lòng nhập tên người dùng hoặc email"),
@@ -94,9 +94,8 @@ export function LoginForm() {
 
       setTimeout(() => {
         const user = useAuth.getState().user;
-        console.log("Redirecting for role:", user?.role);
-
-        if (user?.role === "manager") {
+        
+        if (user?.role === "manager" || user?.role === "admin") {
           router.push(ROUTES.MANAGER.DASHBOARD);
         } else {
           router.push(ROUTES.STAFF.DASHBOARD);
@@ -115,38 +114,40 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold">Đăng nhập</CardTitle>
-        <CardDescription>
-          Nhập tên người dùng/email và mật khẩu để truy cập tài khoản của bạn
+    <Card className="w-full max-w-md shadow-lg border-0">
+      <CardHeader className="space-y-3 text-center">
+        <CardTitle className="text-3xl font-bold text-gray-900">Đăng nhập</CardTitle>
+        <CardDescription className="text-gray-600">
+          Chào mừng trở lại! Vui lòng đăng nhập vào tài khoản của bạn
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <AuthStatusIndicator />
-{isLoading ? (
-          <div className="space-y-4">
+        {isLoading ? (
+          <div className="space-y-6">
             <div className="space-y-2">
-              <Skeleton className="h-4 w-32" />
-              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-11 w-full" />
             </div>
             <div className="space-y-2">
               <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-11 w-full" />
             </div>
-            <Skeleton className="h-6 w-24 ml-auto" />
-            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-11 w-full" />
+            <div className="text-center">
+              <Skeleton className="h-4 w-48 mx-auto" />
+            </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">Tên người dùng hoặc Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
               <Input
                 id="email"
-                type="text"
-                placeholder="staff or manager"
+                type="email"
+                placeholder="Nhập email của bạn"
                 {...register("email")}
-                className={errors.email ? "border-red-500" : ""}
+                className={`h-11 ${errors.email ? "border-red-500 focus:border-red-500" : "focus:border-blue-500"}`}
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -154,20 +155,20 @@ export function LoginForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mật khẩu</Label>
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">Mật khẩu</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Nhập mật khẩu của bạn"
                   {...register("password")}
-                  className={errors.password ? "border-red-500 pr-10" : "pr-10"}
+                  className={`h-11 pr-10 ${errors.password ? "border-red-500 focus:border-red-500" : "focus:border-blue-500"}`}
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -182,13 +183,7 @@ export function LoginForm() {
               )}
             </div>
 
-            <div className="flex items-center justify-end space-x-2">
-              <Label 
-                htmlFor="rememberMe" 
-                className="text-sm font-normal cursor-pointer"
-              >
-                Nhớ mật khẩu
-              </Label>
+            <div className="flex items-center space-x-2">
               <Checkbox
                 id="rememberMe"
                 checked={rememberMe}
@@ -196,20 +191,29 @@ export function LoginForm() {
                   setRememberMe(checked as boolean);
                   setValue('rememberMe', checked as boolean);
                 }}
+                className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
               />
+              <Label 
+                htmlFor="rememberMe" 
+                className="text-sm font-normal cursor-pointer text-gray-600"
+              >
+                Ghi nhớ đăng nhập
+              </Label>
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
               Đăng nhập
             </Button>
           </form>
         )}
 
-        <div className="mt-4 text-center text-sm">
-          {"Chưa có tài khoản? "}
-          <Link href={ROUTES.REGISTER} className="text-primary hover:underline">
-            Đăng ký
-          </Link>
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Chưa có tài khoản?{" "}
+            <Link href={ROUTES.REGISTER} className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors">
+              Đăng ký ngay
+            </Link>
+          </p>
         </div>
       </CardContent>
     </Card>

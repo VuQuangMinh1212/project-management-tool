@@ -283,82 +283,90 @@ export default function StaffDashboardPage() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-full overflow-x-auto">
-      <div className="space-y-6 min-w-0">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold">Bảng Điều Khiển</h1>
-            <p className="text-gray-600">
-              Quản lý nhiệm vụ, tạo bản nháp và theo dõi tiến độ công việc của bạn.
-            </p>
-          </div>
-          <div className="flex gap-2 flex-wrap items-center">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Filter className="h-4 w-4 text-gray-500" />
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Lọc nhiệm vụ" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tất Cả Nhiệm Vụ</SelectItem>
-                  <SelectItem value="drafts">Chỉ Bản Nháp</SelectItem>
-                  <SelectItem value="pending">Chỉ Đang Chờ</SelectItem>
-                  <SelectItem value="active">Chỉ Đang Hoạt Động</SelectItem>
-                </SelectContent>
-              </Select>
-              <FilterDropdown 
-                groups={filterGroups}
-                selectedFilters={selectedFilters}
-                onFiltersChange={setSelectedFilters}
-              />
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Bảng Công Việc</h1>
+              <p className="mt-2 text-gray-600">Quản lý nhiệm vụ và theo dõi tiến độ làm việc</p>
             </div>
-            {/* Show active lọc */}
-            {Object.values(selectedFilters).some(filters => filters.length > 0) && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-blue-600">Bộ lọc hiện tại:</span>
-                {Object.entries(selectedFilters).map(([filterType, values]) =>
-                  values.map((value) => (
-                    <div key={`${filterType}-${value}`} className="flex items-center gap-1 text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                      <span className="font-medium">{filterType}: {value}</span>
-                      <button 
-                        onClick={() => {
-                          const newFilters = { ...selectedFilters };
-                          newFilters[filterType] = values.filter(v => v !== value);
-                          if (newFilters[filterType].length === 0) {
-                            delete newFilters[filterType];
-                          }
-                          setSelectedFilters(newFilters);
-                        }}
-                        className="ml-1 text-blue-400 hover:text-blue-600"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-            <Button variant="outline" onClick={handleCreateNewTask}>
-              <Plus className="mr-2 h-4 w-4" />
-              Nhiệm Vụ Mới
-            </Button>
-            <Button onClick={() => setIsBulkCreatorOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Tạo Nhiều Nhiệm Vụ
-            </Button>
+            
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={handleCreateNewTask} className="border-gray-300 hover:bg-gray-50">
+                <Plus className="mr-2 h-4 w-4" />
+                Nhiệm vụ mới
+              </Button>
+              <Button onClick={() => setIsBulkCreatorOpen(true)} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="mr-2 h-4 w-4" />
+                Tạo nhiều nhiệm vụ
+              </Button>
+            </div>
           </div>
+          
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-gray-500" />
+              <span className="text-sm text-gray-600">Bộ lọc:</span>
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Lọc nhiệm vụ" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả nhiệm vụ</SelectItem>
+                <SelectItem value="drafts">Chỉ bản nháp</SelectItem>
+                <SelectItem value="pending">Chỉ đang chờ</SelectItem>
+                <SelectItem value="active">Chỉ đang hoạt động</SelectItem>
+              </SelectContent>
+            </Select>
+            <FilterDropdown 
+              groups={filterGroups}
+              selectedFilters={selectedFilters}
+              onFiltersChange={setSelectedFilters}
+            />
+            {/* Show active lọc */}
+          
+          {Object.values(selectedFilters).some(filters => filters.length > 0) && (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="text-sm text-gray-600">Đang lọc:</span>
+              {Object.entries(selectedFilters).map(([filterType, values]) =>
+                values.map((value) => (
+                  <div key={`${filterType}-${value}`} className="flex items-center gap-1 text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                    <span>{filterType}: {value}</span>
+                    <button 
+                      onClick={() => {
+                        const newFilters = { ...selectedFilters };
+                        newFilters[filterType] = values.filter(v => v !== value);
+                        if (newFilters[filterType].length === 0) {
+                          delete newFilters[filterType];
+                        }
+                        setSelectedFilters(newFilters);
+                      }}
+                      className="ml-1 text-blue-600 hover:text-blue-800"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
         <Tabs defaultValue={visibleSections[0] || "drafts"} className="space-y-6">
           {visibleSections.length > 0 && (
-            <TabsList className={`grid w-full ${
+            <TabsList className={`bg-white border border-gray-200 p-1 rounded-lg shadow-sm grid w-full ${
               visibleSections.length === 1 ? 'grid-cols-1' :
               visibleSections.length === 2 ? 'grid-cols-2' :
               'grid-cols-3'
             }`}>
               {visibleSections.includes("drafts") && (
-                <TabsTrigger value="drafts" className="relative">
-                  Bản Nháp
+                <TabsTrigger value="drafts" className="relative data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                  Bản nháp
                   {draftTasks.length > 0 && (
                     <span className="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                       {draftTasks.length}
@@ -367,8 +375,8 @@ export default function StaffDashboardPage() {
                 </TabsTrigger>
               )}
               {visibleSections.includes("pending") && (
-                <TabsTrigger value="pending" className="relative">
-                  Chờ Phê Duyệt
+                <TabsTrigger value="pending" className="relative data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                  Chờ phê duyệt
                   {pendingTasks.length > 0 && (
                     <span className="ml-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
                       {pendingTasks.length}
@@ -377,8 +385,8 @@ export default function StaffDashboardPage() {
                 </TabsTrigger>
               )}
               {visibleSections.includes("active") && (
-                <TabsTrigger value="active">
-                  Nhiệm Vụ Hoạt Động
+                <TabsTrigger value="active" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                  Đang thực hiện
                   {activeTasks.length > 0 && (
                     <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                       {activeTasks.length}
@@ -492,6 +500,7 @@ export default function StaffDashboardPage() {
         onCreateBulk={handleCreateBulkTasks}
         onSaveBulkDrafts={handleSaveBulkDrafts}
       />
+      </div>
     </div>
   )
 }

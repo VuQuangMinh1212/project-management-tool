@@ -150,15 +150,24 @@ export const useAuth = create<AuthStore>()(
         }
       },
 
-      logout: () => {
-        enhancedTokenStorage.clearTokens();
-        set({
-          user: null,
-          token: null,
-          isAuthenticated: false,
-          isLoading: false,
-          error: null,
-        });
+      logout: async () => {
+        try {
+          const refreshToken = enhancedTokenStorage.getRefreshToken();
+          if (refreshToken) {
+            await authService.logout(refreshToken);
+          }
+        } catch (error) {
+          console.error("Logout API call failed:", error);
+        } finally {
+          enhancedTokenStorage.clearTokens();
+          set({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+            isLoading: false,
+            error: null,
+          });
+        }
       },
 
       setUser: (user: User) => {

@@ -4,18 +4,16 @@ import type { Plan, PlanWithDetails } from "@/types/database";
 const getWeekStart = (date: Date): string => {
   const d = new Date(date);
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   d.setDate(diff);
   return d.toISOString().split("T")[0];
 };
 
-// Generate dates for current and previous weeks
 const currentWeek = getWeekStart(new Date());
 const lastWeek = getWeekStart(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
 const nextWeek = getWeekStart(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000));
 
 export const mockPlans: Plan[] = [
-  // Current week plans
   {
     id: "plan1",
     user_id: "user1",
@@ -51,7 +49,6 @@ export const mockPlans: Plan[] = [
     created_at: "2025-07-01T11:00:00Z",
   },
 
-  // Next week plans
   {
     id: "plan4",
     user_id: "user1",
@@ -73,7 +70,6 @@ export const mockPlans: Plan[] = [
     created_at: "2025-07-07T15:00:00Z",
   },
 
-  // Last week plans (completed)
   {
     id: "plan6",
     user_id: "user1",
@@ -98,7 +94,6 @@ export const mockPlans: Plan[] = [
   },
 ];
 
-// Extended plans with computed fields for UI
 export const mockPlansWithDetails: PlanWithDetails[] = mockPlans.map((plan) => {
   const user =
     plan.user_id === "user1"
@@ -113,7 +108,6 @@ export const mockPlansWithDetails: PlanWithDetails[] = mockPlans.map((plan) => {
     ...plan,
     user_name: user.name,
     user_avatar: user.avatar,
-    // These will be computed from tasks when needed
     taskCount: 0,
     completedTaskCount: 0,
     averageProgress: 0,

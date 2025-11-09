@@ -103,80 +103,89 @@ export function CombinedManagerDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Bảng Điều Khiển Quản Lý & Phân Tích</h1>
-          <p className="text-muted-foreground">Tổng quan nhóm, theo dõi hiệu suất và phân tích chi tiết</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm">
-            <Download className="mr-2 h-4 w-4" />
-            Xuất
-          </Button>
-        </div>
-      </div>
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tổng nhiệm vụ</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalTasks}</div>
-            <p className="text-xs text-muted-foreground">Across all projects</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Đã hoàn thành</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{completedTasks}</div>
-            <p className="text-xs text-muted-foreground">
-              Tỷ lệ hoàn thành {totalTasks > 0
-                ? Math.round((completedTasks / totalTasks) * 100)
-                : 0}%
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Đang thực hiện</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{inProgressTasks}</div>
-            <p className="text-xs text-muted-foreground">Đang hoạt động</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Quá hạn</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {overdueTasks}
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Dashboard Quản Lý</h1>
+              <p className="mt-2 text-gray-600">Tổng quan dự án, nhóm và hiệu suất làm việc</p>
             </div>
-            <p className="text-xs text-muted-foreground">Cần chú ý</p>
-          </CardContent>
-        </Card>
+            <div className="flex items-center gap-3">
+              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                <Download className="mr-2 h-4 w-4" />
+                Xuất báo cáo
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-          <TabsTrigger value="team-performance">Hiệu suất Nhóm</TabsTrigger>
-          <TabsTrigger value="staff">Hiệu suất cá nhân</TabsTrigger>
-          <TabsTrigger value="analytics">Phân tích</TabsTrigger>
-        </TabsList>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-0 shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Tổng nhiệm vụ</CardTitle>
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-blue-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-gray-900">{totalTasks}</div>
+              <p className="text-sm text-gray-500 mt-1">Tất cả dự án</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Đã hoàn thành</CardTitle>
+              <div className="p-2 bg-green-100 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-green-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-gray-900">{completedTasks}</div>
+              <p className="text-sm text-gray-500 mt-1">
+                Tỷ lệ {totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0}%
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Đang thực hiện</CardTitle>
+              <div className="p-2 bg-yellow-100 rounded-lg">
+                <Clock className="h-5 w-5 text-yellow-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-gray-900">{inProgressTasks}</div>
+              <p className="text-sm text-gray-500 mt-1">Đang hoạt động</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">Quá hạn</CardTitle>
+              <div className="p-2 bg-red-100 rounded-lg">
+                <Users className="h-5 w-5 text-red-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-red-600">{overdueTasks}</div>
+              <p className="text-sm text-gray-500 mt-1">Cần chú ý</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="bg-white border border-gray-200 p-1 rounded-lg shadow-sm">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Tổng quan</TabsTrigger>
+            <TabsTrigger value="team-performance" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Hiệu suất Nhóm</TabsTrigger>
+            <TabsTrigger value="staff" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Hiệu suất cá nhân</TabsTrigger>
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">Phân tích</TabsTrigger>
+          </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -320,6 +329,7 @@ export function CombinedManagerDashboard() {
           </Card>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }
