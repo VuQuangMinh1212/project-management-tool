@@ -138,14 +138,18 @@ export default function UserDetailModal({ isOpen, userId, onClose }: UserDetailM
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Tạo lúc:</span>
-                    <span>{format(new Date(user.createdAt), 'dd/MM/yyyy HH:mm')}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Cập nhật lúc:</span>
-                    <span>{format(new Date(user.updatedAt), 'dd/MM/yyyy HH:mm')}</span>
-                  </div>
+                  {user.createdAt && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Tạo lúc:</span>
+                      <span>{format(new Date(user.createdAt), 'dd/MM/yyyy HH:mm')}</span>
+                    </div>
+                  )}
+                  {user.updatedAt && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Cập nhật lúc:</span>
+                      <span>{format(new Date(user.updatedAt), 'dd/MM/yyyy HH:mm')}</span>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

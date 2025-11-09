@@ -32,6 +32,7 @@ export interface Task {
   reviewedAt?: string;
   reviewedById?: string;
   reviewComment?: string;
+  statusNote?: string;
   isDraft?: boolean;
   batchId?: string;
 }
@@ -71,14 +72,17 @@ export interface CreateTaskData {
 export interface UpdateTaskData {
   title?: string;
   description?: string;
-  status?: TaskStatus;
-  priority?: string;
-  assigneeId?: string;
+  assigneeIds?: string[];
   projectId?: string;
+  priority?: string;
   dueDate?: string;
   estimatedHours?: number;
   weekSubmittedFor?: string;
   isDraft?: boolean;
+  status?: string;
+  reviewComment?: string;
+  statusNote?: string;
+  actualHours?: number;
 }
 
 // New interfaces for batch operations
