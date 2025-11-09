@@ -2,28 +2,20 @@ export interface Project {
   id: string
   name: string
   description?: string
-  color: string
+  managerId: string
   status: ProjectStatus
   startDate: string
   endDate?: string
-  manager: {
-    id: string
-    name: string
-    email: string
-    avatar?: string
-  }
-  members: ProjectMember[]
-  tasks: string[] // Task IDs
   createdAt: string
   updatedAt: string
 }
 
 export enum ProjectStatus {
-  PLANNING = "planning",
-  ACTIVE = "active",
-  ON_HOLD = "on_hold",
-  COMPLETED = "completed",
-  CANCELLED = "cancelled",
+  PLANNING = "PLANNING",
+  ACTIVE = "ACTIVE",
+  ON_HOLD = "ON_HOLD",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
 }
 
 export interface ProjectMember {
@@ -44,18 +36,28 @@ export enum ProjectRole {
 export interface CreateProjectData {
   name: string
   description?: string
-  color: string
+  managerId: string
+  managerIds?: string[]
   startDate: string
   endDate?: string
-  memberIds: string[]
 }
 
 export interface UpdateProjectData {
   name?: string
   description?: string
-  color?: string
+  managerId?: string
+  managerIds?: string[]
   status?: ProjectStatus
   startDate?: string
   endDate?: string
-  memberIds?: string[]
+}
+
+export interface ProjectFilters {
+  name?: string
+  managerId?: string
+  status?: ProjectStatus
+  startDateFrom?: string
+  startDateTo?: string
+  endDateFrom?: string
+  endDateTo?: string
 }

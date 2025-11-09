@@ -13,10 +13,12 @@ export const ROUTES = {
     TEAM: "/manager/team",
     APPROVALS: "/manager/approvals",
     USERS: "/manager/users",
+    PROJECTS: "/manager/projects",
   },
   ADMIN: {
     DASHBOARD: "/admin/dashboard",
     USERS: "/admin/users",
+    PROJECTS: "/admin/projects",
   },
 } as const;
 
@@ -33,9 +35,10 @@ export const MANAGER_ROUTES = [
   ROUTES.MANAGER.TEAM,
   ROUTES.MANAGER.APPROVALS,
   ROUTES.MANAGER.USERS,
+  ROUTES.MANAGER.PROJECTS,
 ];
 
-export const ADMIN_ROUTES = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.USERS];
+export const ADMIN_ROUTES = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.USERS, ROUTES.ADMIN.PROJECTS];
 
 export const PROTECTED_ROUTES = [
   ...STAFF_ROUTES,

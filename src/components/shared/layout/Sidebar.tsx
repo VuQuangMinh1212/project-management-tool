@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, CheckSquare, Users, BarChart3, LogOut, ChevronLeft, ChevronRight, User } from "lucide-react"
+import { LayoutDashboard, CheckSquare, Users, BarChart3, LogOut, ChevronLeft, ChevronRight, User, FolderOpen } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/auth/useAuth"
@@ -50,6 +50,11 @@ export function Sidebar({ className }: SidebarProps) {
       icon: Users,
     },
     {
+      title: "Dự án của tôi",
+      href: ROUTES.MANAGER.PROJECTS,
+      icon: FolderOpen,
+    },
+    {
       title: "Phê duyệt",
       href: ROUTES.MANAGER.APPROVALS,
       icon: CheckSquare,
@@ -71,6 +76,11 @@ export function Sidebar({ className }: SidebarProps) {
       title: "Quản lý người dùng",
       href: ROUTES.ADMIN.USERS,
       icon: Users,
+    },
+    {
+      title: "Quản lý dự án",
+      href: ROUTES.ADMIN.PROJECTS,
+      icon: FolderOpen,
     },
   ]
 
