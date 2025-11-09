@@ -2,11 +2,13 @@ import { apiClient } from "@/lib/api/client"
 import type { User } from "@/types/auth"
 
 export interface CreateUserData {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
-  passwordHash: string;
+  password: string;
   role: "admin" | "manager" | "employee";
+  firstName?: string;
+  lastName?: string;
+  passwordHash?: string;
   avatarUrl?: string;
 }
 

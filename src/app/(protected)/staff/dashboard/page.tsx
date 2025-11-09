@@ -170,7 +170,7 @@ export default function StaffDashboardPage() {
       ...taskData,
       id: Date.now().toString(),
       assigneeName: user?.name || "Unknown",
-      assigneeAvatar: user?.avatar,
+      assigneeAvatar: user?.avatarUrl,
       status: taskData.isDraft ? TaskStatus.DRAFT : TaskStatus.PENDING_APPROVAL,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

@@ -14,6 +14,10 @@ export const ROUTES = {
     APPROVALS: "/manager/approvals",
     USERS: "/manager/users",
   },
+  ADMIN: {
+    DASHBOARD: "/admin/dashboard",
+    USERS: "/admin/users",
+  },
 } as const;
 
 export const PUBLIC_ROUTES = [ROUTES.HOME, ROUTES.LOGIN, ROUTES.REGISTER];
@@ -31,8 +35,11 @@ export const MANAGER_ROUTES = [
   ROUTES.MANAGER.USERS,
 ];
 
+export const ADMIN_ROUTES = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.USERS];
+
 export const PROTECTED_ROUTES = [
   ...STAFF_ROUTES,
   ...MANAGER_ROUTES,
+  ...ADMIN_ROUTES,
   ROUTES.DASHBOARD,
 ];

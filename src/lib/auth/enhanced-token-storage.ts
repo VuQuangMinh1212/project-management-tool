@@ -5,12 +5,14 @@ export interface TokenStorageOptions {
 export const enhancedTokenStorage = {
   saveTokens: (
     accessToken: string,
+    refreshToken: string,
     user: any,
     options: TokenStorageOptions = {}
   ) => {
     if (typeof window === "undefined") return;
 
     localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("refresh_token", refreshToken);
     localStorage.setItem("user_info", JSON.stringify(user));
     localStorage.setItem("remember_me", options.rememberMe?.toString() || "false");
   },
@@ -18,6 +20,11 @@ export const enhancedTokenStorage = {
   getAccessToken: () => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("access_token");
+  },
+
+  getRefreshToken: () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("refresh_token");
   },
 
 
@@ -44,8 +51,15 @@ export const enhancedTokenStorage = {
   clearTokens: () => {
     if (typeof window === "undefined") return;
     localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     localStorage.removeItem("user_info");
     localStorage.removeItem("remember_me");
+  },
+
+  isTokenValid: (): boolean => {
+    if (typeof window === "undefined") return false;
+    const token = localStorage.getItem("access_token");
+    return token ? !enhancedTokenStorage.isTokenExpired(token) : false;
   },
 
   getRememberMeStatus: (): boolean => {

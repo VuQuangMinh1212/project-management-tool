@@ -55,13 +55,32 @@ export function Sidebar({ className }: SidebarProps) {
       icon: CheckSquare,
     },
     {
-      title: "Quản lý người dùng",
+      title: "Xem người dùng",
       href: ROUTES.MANAGER.USERS,
       icon: User,
     },
   ]
 
-  const navItems = (user?.role === "manager" || user?.role === "admin") ? managerNavItems : staffNavItems
+  const adminNavItems = [
+    {
+      title: "Bảng điều khiển",
+      href: ROUTES.ADMIN.DASHBOARD,
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Quản lý người dùng",
+      href: ROUTES.ADMIN.USERS,
+      icon: Users,
+    },
+  ]
+
+  const getNavItems = () => {
+    if (user?.role === "admin") return adminNavItems
+    if (user?.role === "manager") return managerNavItems
+    return staffNavItems
+  }
+
+  const navItems = getNavItems()
 
   return (
     <div

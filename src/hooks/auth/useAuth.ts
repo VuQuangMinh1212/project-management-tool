@@ -185,22 +185,20 @@ export const useAuth = create<AuthStore>()(
       initialize: async () => {
         if (typeof window === "undefined") return;
 
-        // Check if we have valid token using enhanced storage
-        if (!enhancedTokenStorage.isTokenValid()) {
-          enhancedTokenStorage.clearTokens();
-          set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-            isLoading: false,
-          });
-          return;
-        }
+        set({ isLoading: true });
 
         const token = enhancedTokenStorage.getAccessToken();
         const storedUser = enhancedTokenStorage.getStoredUser();
 
-        if (storedUser && token && !enhancedTokenStorage.isTokenExpired(token)) {
+        console.log("Auth initialize:", { 
+          hasToken: !!token, 
+          hasUser: !!storedUser, 
+          isExpired: token ? enhancedTokenStorage.isTokenExpired(token) : null 
+        });
+
+        // If we have both token and user data stored, and token is not expired
+        if (token && storedUser && !enhancedTokenStorage.isTokenExpired(token)) {
+          console.log("Restoring authentication from storage");
           set({
             user: storedUser,
             token,
@@ -210,48 +208,48 @@ export const useAuth = create<AuthStore>()(
           return;
         }
 
-        if (token) {
-          set({ isLoading: true });
+        // If token exists but is expired, try to refresh
+        if (token && enhancedTokenStorage.isTokenExpired(token)) {
+          const refreshToken = enhancedTokenStorage.getRefreshToken();
+          if (refreshToken) {
+            try {
+              const response = await authService.refreshToken(refreshToken);
+              const fullUser: User = {
+                ...response.user,
+                name: `${response.user.firstName} ${response.user.lastName}`,
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              };
 
-          try {
-            // Add timeout to prevent hanging
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+              enhancedTokenStorage.saveTokens(
+                response.access_token,
+                response.refresh_token,
+                fullUser,
+                { rememberMe: enhancedTokenStorage.getRememberMeStatus() }
+              );
 
-            const user = await authService.getCurrentUser();
-            clearTimeout(timeoutId);
-
-            const fullUser: User = {
-              ...user,
-              name: `${user.firstName} ${user.lastName}`,
-            };
-
-            enhancedTokenStorage.saveTokens(
-              token,
-              enhancedTokenStorage.getRefreshToken() || "",
-              fullUser,
-              { rememberMe: enhancedTokenStorage.getRememberMeStatus() }
-            );
-
-            set({
-              user: fullUser,
-              token,
-              isAuthenticated: true,
-              isLoading: false,
-            });
-          } catch (apiError) {
-            console.error("Failed to restore user session:", apiError);
-            enhancedTokenStorage.clearTokens();
-            set({
-              user: null,
-              token: null,
-              isAuthenticated: false,
-              isLoading: false,
-            });
+              set({
+                user: fullUser,
+                token: response.access_token,
+                isAuthenticated: true,
+                isLoading: false,
+              });
+              return;
+            } catch (error) {
+              console.error("Token refresh failed:", error);
+            }
           }
-        } else {
-          set({ isLoading: false });
         }
+
+        // Clear tokens and set unauthenticated state
+        enhancedTokenStorage.clearTokens();
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          isLoading: false,
+        });
       },
     }),
     {

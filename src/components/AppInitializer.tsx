@@ -4,9 +4,11 @@ import { useEffect } from "react";
 import { useAuth } from "@/hooks/auth/useAuth";
 
 export function AppInitializer() {
+  const initialize = useAuth((state) => state.initialize);
+
   useEffect(() => {
-    useAuth.getState().initialize();
-  }, []);
+    initialize();
+  }, [initialize]);
 
   return null;
 }
