@@ -1,18 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { CalendarIcon } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { Badge } from '@/components/ui/badge'
+import { CalendarIcon, Check, ChevronsUpDown, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { CreateProjectData } from '@/types/project'
-import { projectsService } from '@/services'
+import { projectsService, userService } from '@/services'
 import { useModernToast } from '@/components/ui/modern-toast-provider'
+import type { User } from '@/types/auth'
 
 interface CreateProjectModalProps {
   isOpen: boolean
@@ -29,17 +33,58 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
     startDate: '',
     endDate: '',
   })
-  const [startDate, setStartDate] = useState<Date>()
+  const [startDate, setStartDate] = useState<Date>(new Date())
   const [endDate, setEndDate] = useState<Date>()
   const [loading, setLoading] = useState(false)
-  const [managerIdsInput, setManagerIdsInput] = useState('')
+  const [managers, setManagers] = useState<User[]>([])
+  const [selectedManagers, setSelectedManagers] = useState<User[]>([])
+  const [managersLoading, setManagersLoading] = useState(false)
+  const [managerSelectOpen, setManagerSelectOpen] = useState(false)
+  const [managerSearch, setManagerSearch] = useState('')
   
   const { success, error } = useModernToast()
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchManagers()
+    }
+  }, [isOpen])
+
+  const fetchManagers = async () => {
+    try {
+      setManagersLoading(true)
+      const data = await userService.getUsers('manager')
+      setManagers(data)
+    } catch (err) {
+      error('Lỗi khi tải danh sách quản lý')
+    } finally {
+      setManagersLoading(false)
+    }
+  }
+
+  const handleManagerSelect = (manager: User) => {
+    const isSelected = selectedManagers.find(m => m.id === manager.id)
+    if (isSelected) {
+      setSelectedManagers(prev => prev.filter(m => m.id !== manager.id))
+    } else {
+      setSelectedManagers(prev => [...prev, manager])
+    }
+    setManagerSearch('')
+  }
+
+  const removeManager = (managerId: string) => {
+    setSelectedManagers(prev => prev.filter(m => m.id !== managerId))
+  }
+
+  const filteredManagers = managers.filter(manager => 
+    manager.fullName?.toLowerCase().includes(managerSearch.toLowerCase()) ||
+    manager.email?.toLowerCase().includes(managerSearch.toLowerCase())
+  )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.name.trim() || !formData.managerId.trim() || !startDate) {
+    if (!formData.name.trim() || !startDate) {
       error('Vui lòng điền đầy đủ thông tin bắt buộc')
       return
     }
@@ -47,14 +92,10 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
     setLoading(true)
     
     try {
-      const managerIds = managerIdsInput
-        .split(',')
-        .map(id => id.trim())
-        .filter(id => id.length > 0)
-
       await projectsService.createProject({
         ...formData,
-        managerIds: managerIds.length > 0 ? managerIds : undefined,
+        managerId: selectedManagers.length > 0 ? selectedManagers[0].id : '',
+        managerIds: selectedManagers.map(m => m.id),
         startDate: startDate.toISOString().split('T')[0],
         endDate: endDate ? endDate.toISOString().split('T')[0] : undefined,
       })
@@ -79,9 +120,10 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
       startDate: '',
       endDate: '',
     })
-    setStartDate(undefined)
+    setStartDate(new Date())
     setEndDate(undefined)
-    setManagerIdsInput('')
+    setSelectedManagers([])
+    setManagerSearch('')
   }
 
   const handleClose = () => {
@@ -124,28 +166,72 @@ export default function CreateProjectModal({ isOpen, onClose, onSuccess }: Creat
 
           <div>
             <label className="text-sm font-medium mb-2 block">
-              ID Người quản lý chính <span className="text-red-500">*</span>
+              Người quản lý
             </label>
-            <Input
-              value={formData.managerId}
-              onChange={(e) => setFormData(prev => ({ ...prev, managerId: e.target.value }))}
-              placeholder="Nhập ID người quản lý chính"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">
-              ID Người quản lý phụ
-            </label>
-            <Input
-              value={managerIdsInput}
-              onChange={(e) => setManagerIdsInput(e.target.value)}
-              placeholder="Nhập các ID người quản lý phụ, cách nhau bằng dấu phẩy"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Ví dụ: uuid-1, uuid-2, uuid-3
-            </p>
+            <Popover open={managerSelectOpen} onOpenChange={setManagerSelectOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={managerSelectOpen}
+                  className="w-full justify-between"
+                  disabled={managersLoading}
+                >
+                  {selectedManagers.length === 0 
+                    ? "Chọn người quản lý..."
+                    : `${selectedManagers.length} người được chọn`
+                  }
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0">
+                <Command>
+                  <CommandInput 
+                    placeholder="Tìm kiếm theo tên hoặc email..."
+                    value={managerSearch}
+                    onValueChange={setManagerSearch}
+                  />
+                  <CommandEmpty>Không tìm thấy quản lý nào.</CommandEmpty>
+                  <CommandGroup className="max-h-[200px] overflow-auto">
+                    {filteredManagers.map((manager) => {
+                      const isSelected = selectedManagers.find(m => m.id === manager.id)
+                      return (
+                        <CommandItem
+                          key={manager.id}
+                          value={manager.fullName}
+                          onSelect={() => handleManagerSelect(manager)}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              isSelected ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          <div className="flex flex-col">
+                            <span>{manager.fullName}</span>
+                            <span className="text-xs text-muted-foreground">{manager.email}</span>
+                          </div>
+                        </CommandItem>
+                      )
+                    })}
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            
+            {selectedManagers.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {selectedManagers.map((manager) => (
+                  <Badge key={manager.id} variant="secondary" className="flex items-center gap-1">
+                    {manager.fullName}
+                    <X 
+                      className="h-3 w-3 cursor-pointer" 
+                      onClick={() => removeManager(manager.id)}
+                    />
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
