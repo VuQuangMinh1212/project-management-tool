@@ -32,6 +32,6 @@ export const projectsService = {
   },
 
   async deleteProject(id: string): Promise<void> {
-    await apiClient.delete(`/projects/${id}`)
+    await apiClient.delete(`/v1/projects/${id}`)
   },
 }

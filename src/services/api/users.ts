@@ -1,21 +1,6 @@
 import { apiClient } from "@/lib/api/client"
 import type { User } from "@/types/auth"
-
-export interface CreateUserData {
-  fullName: string;
-  email: string;
-  passwordHash: string;
-  role: "admin" | "manager" | "employee";
-  avatarUrl?: string;
-}
-
-export interface UpdateUserData {
-  fullName?: string;
-  email?: string;
-  passwordHash?: string;
-  role?: "admin" | "manager" | "employee";
-  avatarUrl?: string;
-}
+import type { CreateUserData, UpdateUserData } from "@/types/user"
 
 export interface UserFilters {
   role?: string
@@ -51,7 +36,7 @@ export const userService = {
   },
 
   async deleteUser(id: string): Promise<void> {
-    return apiClient.delete(`/users/${id}`)
+    return apiClient.delete(`/v1/users/${id}`)
   },
 
   async inviteUser(data: { email: string; role: string }): Promise<void> {

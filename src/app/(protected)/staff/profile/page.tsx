@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Camera, Save } from "lucide-react"
+import { Camera, Save, Lock } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/hooks/auth/useAuth"
+import ChangePasswordModal from "@/components/ui/change-password-modal"
 
 const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -25,8 +26,9 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>
 
 export default function ProfilePage() {
-  const { user, updateUser } = useAuth()
+  const { user } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
+  const [showChangePassword, setShowChangePassword] = useState(false)
 
   const {
     register,
@@ -35,10 +37,10 @@ export default function ProfilePage() {
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user?.name || "",
+      name: user?.fullName || "",
       email: user?.email || "",
       bio: "",
-      phone: "",
+      phone: user?.phone || "",
       location: "",
     },
   })
@@ -46,9 +48,8 @@ export default function ProfilePage() {
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true)
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000))
-      updateUser(data)
+      console.log('Profile data:', data)
     } finally {
       setIsLoading(false)
     }
@@ -70,11 +71,11 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="flex flex-col items-center space-y-4">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={user?.avatar || "/placeholder.svg"} />
+              <AvatarImage src="/placeholder.svg" />
               <AvatarFallback className="text-lg">
-                {user?.name
+                {user?.fullName
                   ?.split(" ")
-                  .map((n) => n[0])
+                  .map((n: string) => n[0])
                   .join("")
                   .toUpperCase()}
               </AvatarFallback>
@@ -146,7 +147,36 @@ export default function ProfilePage() {
             </form>
           </CardContent>
         </Card>
+
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle>Security</CardTitle>
+            <CardDescription>Manage your account security settings</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div>
+                <h3 className="font-medium">Password</h3>
+                <p className="text-sm text-muted-foreground">
+                  Change your password to keep your account secure
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setShowChangePassword(true)}
+              >
+                <Lock className="mr-2 h-4 w-4" />
+                Change Password
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      <ChangePasswordModal
+        isOpen={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
     </div>
   )
 }

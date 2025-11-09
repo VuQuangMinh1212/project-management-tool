@@ -89,4 +89,27 @@ export const tasksService = {
     const url = queryString ? `/v1/tasks/project/${projectId}?${queryString}` : `/v1/tasks/project/${projectId}`
     return apiClient.get<Task[]>(url)
   },
+
+  async getTasksByUser(userId: string, params?: {
+    status?: string
+    priority?: string
+    search?: string
+    weekSubmittedFor?: string
+    isDraft?: boolean
+    page?: number
+    limit?: number
+  }): Promise<Task[]> {
+    const queryParams = new URLSearchParams()
+    if (params?.status) queryParams.append('status', params.status)
+    if (params?.priority) queryParams.append('priority', params.priority)
+    if (params?.search) queryParams.append('search', params.search)
+    if (params?.weekSubmittedFor) queryParams.append('weekSubmittedFor', params.weekSubmittedFor)
+    if (params?.isDraft !== undefined) queryParams.append('isDraft', params.isDraft.toString())
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    
+    const queryString = queryParams.toString()
+    const url = queryString ? `/v1/tasks/user/${userId}?${queryString}` : `/v1/tasks/user/${userId}`
+    return apiClient.get<Task[]>(url)
+  },
 }

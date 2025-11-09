@@ -12,13 +12,21 @@ export interface User {
 }
 
 export interface CreateUserData {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   email: string;
-  passwordHash: string;
-  role: "admin" | "manager" | "employee";
+  role: string;
+  phone?: string;
   avatarUrl?: string;
   password?: string;
+}
+
+export interface UpdateUserData {
+  fullName?: string;
+  email?: string;
+  role?: string;
+  phone?: string;
+  avatarUrl?: string;
+  passwordHash?: string;
 }
 
 export interface UserProfile {
