@@ -244,10 +244,9 @@ export default function EditProjectModal({ isOpen, project, onClose, onSuccess }
                 <SelectValue placeholder="Chọn trạng thái" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ProjectStatus.PLANNING}>Đang lên kế hoạch</SelectItem>
                 <SelectItem value={ProjectStatus.ACTIVE}>Đang thực hiện</SelectItem>
-                <SelectItem value={ProjectStatus.ON_HOLD}>Tạm dừng</SelectItem>
                 <SelectItem value={ProjectStatus.COMPLETED}>Hoàn thành</SelectItem>
+                <SelectItem value={ProjectStatus.ARCHIVED}>Đã lưu trữ</SelectItem>
                 <SelectItem value={ProjectStatus.CANCELLED}>Đã hủy</SelectItem>
               </SelectContent>
             </Select>

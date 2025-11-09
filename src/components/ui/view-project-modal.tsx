@@ -19,18 +19,16 @@ interface ViewProjectModalProps {
 }
 
 const statusColors = {
-  [ProjectStatus.PLANNING]: 'bg-blue-100 text-blue-800',
   [ProjectStatus.ACTIVE]: 'bg-green-100 text-green-800',
-  [ProjectStatus.ON_HOLD]: 'bg-yellow-100 text-yellow-800',
-  [ProjectStatus.COMPLETED]: 'bg-gray-100 text-gray-800',
+  [ProjectStatus.COMPLETED]: 'bg-blue-100 text-blue-800',
+  [ProjectStatus.ARCHIVED]: 'bg-gray-100 text-gray-800',
   [ProjectStatus.CANCELLED]: 'bg-red-100 text-red-800',
 }
 
 const statusLabels = {
-  [ProjectStatus.PLANNING]: 'Đang lên kế hoạch',
   [ProjectStatus.ACTIVE]: 'Đang thực hiện',
-  [ProjectStatus.ON_HOLD]: 'Tạm dừng',
   [ProjectStatus.COMPLETED]: 'Hoàn thành',
+  [ProjectStatus.ARCHIVED]: 'Đã lưu trữ',
   [ProjectStatus.CANCELLED]: 'Đã hủy',
 }
 

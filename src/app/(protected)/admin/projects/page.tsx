@@ -20,10 +20,9 @@ import EditProjectModal from '@/components/ui/edit-project-modal'
 import ViewProjectModal from '@/components/ui/view-project-modal'
 
 const statusColors = {
-  [ProjectStatus.PLANNING]: 'bg-blue-100 text-blue-800',
   [ProjectStatus.ACTIVE]: 'bg-green-100 text-green-800',
-  [ProjectStatus.ON_HOLD]: 'bg-yellow-100 text-yellow-800',
-  [ProjectStatus.COMPLETED]: 'bg-gray-100 text-gray-800',
+  [ProjectStatus.COMPLETED]: 'bg-blue-100 text-blue-800',
+  [ProjectStatus.ARCHIVED]: 'bg-gray-100 text-gray-800',
   [ProjectStatus.CANCELLED]: 'bg-red-100 text-red-800',
 }
 
@@ -157,10 +156,9 @@ export default function ProjectsPage() {
                     <SelectValue placeholder="Chọn trạng thái" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={ProjectStatus.PLANNING}>Đang lên kế hoạch</SelectItem>
                     <SelectItem value={ProjectStatus.ACTIVE}>Đang thực hiện</SelectItem>
-                    <SelectItem value={ProjectStatus.ON_HOLD}>Tạm dừng</SelectItem>
                     <SelectItem value={ProjectStatus.COMPLETED}>Hoàn thành</SelectItem>
+                    <SelectItem value={ProjectStatus.ARCHIVED}>Đã lưu trữ</SelectItem>
                     <SelectItem value={ProjectStatus.CANCELLED}>Đã hủy</SelectItem>
                   </SelectContent>
                 </Select>
@@ -274,10 +272,9 @@ export default function ProjectsPage() {
                     <TableCell className="max-w-xs truncate">{project.description}</TableCell>
                     <TableCell>
                       <Badge className={statusColors[project.status]}>
-                        {project.status === ProjectStatus.PLANNING && 'Đang lên kế hoạch'}
                         {project.status === ProjectStatus.ACTIVE && 'Đang thực hiện'}
-                        {project.status === ProjectStatus.ON_HOLD && 'Tạm dừng'}
                         {project.status === ProjectStatus.COMPLETED && 'Hoàn thành'}
+                        {project.status === ProjectStatus.ARCHIVED && 'Đã lưu trữ'}
                         {project.status === ProjectStatus.CANCELLED && 'Đã hủy'}
                       </Badge>
                     </TableCell>

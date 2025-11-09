@@ -22,11 +22,10 @@ export interface Project {
 }
 
 export enum ProjectStatus {
-  PLANNING = "PLANNING",
-  ACTIVE = "ACTIVE",
-  ON_HOLD = "ON_HOLD",
-  COMPLETED = "COMPLETED",
-  CANCELLED = "CANCELLED",
+  ACTIVE = 'active',
+  COMPLETED = 'completed',
+  ARCHIVED = 'archived',
+  CANCELLED = 'cancelled',
 }
 
 export interface ProjectMember {
