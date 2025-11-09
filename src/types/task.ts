@@ -9,32 +9,31 @@ export interface Task {
   status: TaskStatus;
   priority: TaskPriority;
   assigneeId: string;
-  assigneeName: string;
-  assigneeAvatar?: string;
+  projectId: string;
+  dueDate?: string;
+  estimatedHours?: number;
+  weekSubmittedFor?: string;
+  createdAt: string;
+  updatedAt: string;
+  assignee?: {
+    id: string;
+    fullName: string;
+    email: string;
+  };
   project?: {
     id: string;
     name: string;
-    color: string;
   };
-  projectId?: string;
-  projectName?: string;
-  dueDate?: string;
-  createdAt: string;
-  updatedAt: string;
   tags?: string[];
   attachments?: TaskAttachment[];
   comments?: TaskComment[];
-  estimatedHours?: number;
   actualHours?: number;
-
-  // New workflow fields
-  weekSubmittedFor?: string; // ISO week format (e.g., "2025-W01")
-  submittedAt?: string; // When submitted for approval
-  reviewedAt?: string; // When manager reviewed
-  reviewedById?: string; // Manager who reviewed
-  reviewComment?: string; // Manager's approval/rejection comment
-  isDraft?: boolean; // Whether task is still in draft state
-  batchId?: string; // Group tasks submitted together
+  submittedAt?: string;
+  reviewedAt?: string;
+  reviewedById?: string;
+  reviewComment?: string;
+  isDraft?: boolean;
+  batchId?: string;
 }
 
 export interface TaskAttachment {
@@ -60,29 +59,26 @@ export interface TaskComment {
 export interface CreateTaskData {
   title: string;
   description?: string;
-  priority: TaskPriority;
-  assigneeId: string;
-  projectId?: string;
+  assigneeIds: string[];
+  projectId: string;
+  priority: string;
   dueDate?: string;
-  tags?: string[];
   estimatedHours?: number;
-  weekSubmittedFor?: string; // Target week for the task
-  isDraft?: boolean; // Whether to save as draft
+  weekSubmittedFor?: string;
+  isDraft?: boolean;
 }
 
 export interface UpdateTaskData {
   title?: string;
   description?: string;
   status?: TaskStatus;
-  priority?: TaskPriority;
+  priority?: string;
   assigneeId?: string;
   projectId?: string;
   dueDate?: string;
-  tags?: string[];
   estimatedHours?: number;
-  actualHours?: number;
-  reviewComment?: string; // Manager's review comment
-  statusNote?: string; // Staff notes when updating status
+  weekSubmittedFor?: string;
+  isDraft?: boolean;
 }
 
 // New interfaces for batch operations

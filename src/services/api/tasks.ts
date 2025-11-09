@@ -6,22 +6,35 @@ export const tasksService = {
     status?: string
     assigneeId?: string
     projectId?: string
+    priority?: string
+    search?: string
     page?: number
     limit?: number
-  }): Promise<{ tasks: Task[]; total: number; page: number; totalPages: number }> {
-    return apiClient.get("/tasks", { params })
+  }): Promise<Task[]> {
+    const queryParams = new URLSearchParams()
+    if (params?.status) queryParams.append('status', params.status)
+    if (params?.assigneeId) queryParams.append('assigneeId', params.assigneeId)
+    if (params?.projectId) queryParams.append('projectId', params.projectId)
+    if (params?.priority) queryParams.append('priority', params.priority)
+    if (params?.search) queryParams.append('search', params.search)
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    
+    const queryString = queryParams.toString()
+    const url = queryString ? `/tasks?${queryString}` : '/tasks'
+    return apiClient.get<Task[]>(url)
   },
 
   async getTask(id: string): Promise<Task> {
-    return apiClient.get(`/tasks/${id}`)
+    return apiClient.get<Task>(`/tasks/${id}`)
   },
 
   async createTask(data: CreateTaskData): Promise<Task> {
-    return apiClient.post("/tasks", data)
+    return apiClient.post<Task>("/tasks", data)
   },
 
   async updateTask(id: string, data: UpdateTaskData): Promise<Task> {
-    return apiClient.patch(`/tasks/${id}`, data)
+    return apiClient.patch<Task>(`/tasks/${id}`, data)
   },
 
   async deleteTask(id: string): Promise<void> {

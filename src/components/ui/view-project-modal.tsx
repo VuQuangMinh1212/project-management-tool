@@ -11,6 +11,7 @@ import { format } from 'date-fns'
 import { Project, ProjectStatus } from '@/types/project'
 import { projectsService } from '@/services'
 import { useModernToast } from '@/components/ui/modern-toast-provider'
+import UserDetailModal from '@/components/ui/user-detail-modal'
 
 interface ViewProjectModalProps {
   isOpen: boolean
@@ -35,6 +36,7 @@ const statusLabels = {
 export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewProjectModalProps) {
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   
   const { error } = useModernToast()
 
@@ -100,8 +102,12 @@ export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewPro
                   {project.managers && project.managers.length > 0 ? (
                     <div className="space-y-1">
                       {project.managers.map((manager) => (
-                        <div key={manager.id} className="text-sm">
-                          <p className="font-medium">{manager.fullName}</p>
+                        <div 
+                          key={manager.id} 
+                          className="text-sm cursor-pointer hover:bg-muted/50 p-2 rounded transition-colors"
+                          onClick={() => setSelectedUserId(manager.id)}
+                        >
+                          <p className="font-medium text-blue-600 hover:text-blue-800">{manager.fullName}</p>
                           <p className="text-muted-foreground">{manager.email}</p>
                         </div>
                       ))}
@@ -174,6 +180,12 @@ export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewPro
         <div className="flex justify-end pt-4">
           <Button onClick={onClose}>Đóng</Button>
         </div>
+
+        <UserDetailModal
+          isOpen={!!selectedUserId}
+          userId={selectedUserId}
+          onClose={() => setSelectedUserId(null)}
+        />
       </DialogContent>
     </Dialog>
   )

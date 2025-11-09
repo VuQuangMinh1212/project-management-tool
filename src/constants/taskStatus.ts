@@ -1,16 +1,14 @@
-// Task status matching database schema
 export enum TaskStatus {
-  DRAFT = "draft", // Staff can create multiple draft tasks
-  PENDING_APPROVAL = "pending_approval", // Submitted for manager approval
-  APPROVED = "approved", // Manager approved, can start working
-  TODO = "todo", // Approved and ready to start
-  IN_PROGRESS = "in_progress",
-  DONE = "done",
-  FINISHED = "finished", // Staff completed the task
-  DELAYED = "delayed", // Staff reported delay
-  CANCELLED = "cancelled", // Staff cancelled the task
-  REJECTED = "rejected", // Manager rejected with comments
-  OVERDUE = "overdue", // Task is past its due date
+  DRAFT = 'draft',
+  PENDING_APPROVAL = 'pending_approval',
+  REJECTED = 'rejected',
+  TODO = 'todo',
+  IN_PROGRESS = 'in_progress',
+  FINISHED = 'finished',
+  DONE = 'done',
+  DELAYED = 'delayed',
+  CANCELLED = 'cancelled',
+  OVERDUE = 'overdue',
 }
 
 // User roles matching database schema
@@ -26,18 +24,16 @@ export enum PlanStatus {
   REJECTED = "rejected",
 }
 
-// Labels for UI display
 export const TASK_STATUS_LABELS = {
   [TaskStatus.DRAFT]: "Bản Nháp",
   [TaskStatus.PENDING_APPROVAL]: "Chờ Phê Duyệt",
-  [TaskStatus.APPROVED]: "Đã Phê Duyệt",
+  [TaskStatus.REJECTED]: "Bị Từ Chối",
   [TaskStatus.TODO]: "Cần Làm",
   [TaskStatus.IN_PROGRESS]: "Đang Thực Hiện",
-  [TaskStatus.DONE]: "Hoàn Thành",
   [TaskStatus.FINISHED]: "Đã Kết Thúc",
+  [TaskStatus.DONE]: "Hoàn Thành",
   [TaskStatus.DELAYED]: "Bị Trễ",
   [TaskStatus.CANCELLED]: "Đã Hủy",
-  [TaskStatus.REJECTED]: "Bị Từ Chối",
   [TaskStatus.OVERDUE]: "Quá Hạn",
 } as const;
 
@@ -52,18 +48,16 @@ export const PLAN_STATUS_LABELS = {
   [PlanStatus.REJECTED]: "Rejected",
 } as const;
 
-// Colors for UI components
 export const TASK_STATUS_COLORS = {
   [TaskStatus.DRAFT]: "bg-gray-100 text-gray-600",
   [TaskStatus.PENDING_APPROVAL]: "bg-yellow-100 text-yellow-800",
-  [TaskStatus.APPROVED]: "bg-green-100 text-green-700",
+  [TaskStatus.REJECTED]: "bg-red-100 text-red-800",
   [TaskStatus.TODO]: "bg-blue-100 text-blue-800",
   [TaskStatus.IN_PROGRESS]: "bg-purple-100 text-purple-800",
-  [TaskStatus.DONE]: "bg-green-100 text-green-800",
   [TaskStatus.FINISHED]: "bg-green-100 text-green-800",
+  [TaskStatus.DONE]: "bg-green-100 text-green-800",
   [TaskStatus.DELAYED]: "bg-orange-100 text-orange-800",
   [TaskStatus.CANCELLED]: "bg-red-100 text-red-800",
-  [TaskStatus.REJECTED]: "bg-red-100 text-red-800",
   [TaskStatus.OVERDUE]: "bg-red-200 text-red-900",
 } as const;
 
@@ -73,12 +67,11 @@ export const PLAN_STATUS_COLORS = {
   [PlanStatus.REJECTED]: "bg-red-100 text-red-800",
 } as const;
 
-// Legacy priority support (will be removed in future)
 export enum TaskPriority {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  URGENT = "urgent",
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  URGENT = 'urgent',
 }
 
 export const TASK_PRIORITY_LABELS = {
