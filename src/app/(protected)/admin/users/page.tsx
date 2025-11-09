@@ -60,8 +60,9 @@ const roleColors = {
 };
 
 const createUserSchema = z.object({
+  firstName: z.string().min(2, "Họ phải có ít nhất 2 ký tự"),
+  lastName: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
   email: z.string().email("Email không hợp lệ"),
-  name: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
   password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
   role: z.enum(["admin", "manager", "employee"]),
 });
@@ -116,7 +117,14 @@ export default function AdminUsersPage() {
   const onSubmit = async (data: CreateUserForm) => {
     try {
       setIsSubmitting(true);
-      await userService.createUser(data);
+      const createUserData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        passwordHash: data.password,
+        role: data.role,
+      };
+      await userService.createUser(createUserData);
       toast.success("Tạo người dùng thành công!");
       setIsDialogOpen(false);
       reset();
@@ -179,15 +187,28 @@ export default function AdminUsersPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Tên</Label>
+                    <Label htmlFor="firstName">Họ</Label>
                     <Input
-                      id="name"
-                      placeholder="Nhập tên"
-                      {...register("name")}
-                      className={errors.name ? "border-red-500" : ""}
+                      id="firstName"
+                      placeholder="Nhập họ"
+                      {...register("firstName")}
+                      className={errors.firstName ? "border-red-500" : ""}
                     />
-                    {errors.name && (
-                      <p className="text-sm text-red-600">{errors.name.message}</p>
+                    {errors.firstName && (
+                      <p className="text-sm text-red-600">{errors.firstName.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Tên</Label>
+                    <Input
+                      id="lastName"
+                      placeholder="Nhập tên"
+                      {...register("lastName")}
+                      className={errors.lastName ? "border-red-500" : ""}
+                    />
+                    {errors.lastName && (
+                      <p className="text-sm text-red-600">{errors.lastName.message}</p>
                     )}
                   </div>
 
