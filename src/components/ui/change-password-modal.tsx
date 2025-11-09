@@ -34,9 +34,10 @@ type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 interface ChangePasswordModalProps {
   isOpen: boolean;
   onClose: () => void;
+  userId?: string;
 }
 
-export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
+export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangePasswordModalProps) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -53,11 +54,12 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
   });
 
   const onSubmit = async (data: ChangePasswordFormData) => {
-    if (!user?.id) return;
+    const targetUserId = userId || user?.id;
+    if (!targetUserId) return;
 
     setLoading(true);
     try {
-      await userService.updateUser(user.id, {
+      await userService.updateUser(targetUserId, {
         passwordHash: data.newPassword,
       });
       

@@ -20,6 +20,8 @@ import { Project } from '@/types/project';
 import { tasksService } from '@/services/api/tasks';
 import { userService } from '@/services/api/users';
 import { projectsService } from '@/services/api/projects';
+import CreateTaskModal from '@/components/ui/create-task-modal';
+import CreateTaskBulkModal from '@/components/ui/create-task-bulk-modal';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
@@ -41,6 +43,8 @@ export default function AdminTasksPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<TaskFilters>({});
   const [showFilters, setShowFilters] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showBulkCreateModal, setShowBulkCreateModal] = useState(false);
 
   // Load initial data
   useEffect(() => {
@@ -119,10 +123,16 @@ export default function AdminTasksPage() {
             Quản lý tất cả công việc trong hệ thống
           </p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Tạo công việc mới
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Tạo công việc mới
+          </Button>
+          <Button variant="outline" onClick={() => setShowBulkCreateModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Tạo nhiều công việc
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filter Controls */}
@@ -322,6 +332,18 @@ export default function AdminTasksPage() {
           ))
         )}
       </div>
+
+      <CreateTaskModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => loadTasks()}
+      />
+
+      <CreateTaskBulkModal
+        isOpen={showBulkCreateModal}
+        onClose={() => setShowBulkCreateModal(false)}
+        onSuccess={() => loadTasks()}
+      />
     </div>
   );
 }

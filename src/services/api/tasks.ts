@@ -112,4 +112,8 @@ export const tasksService = {
     const url = queryString ? `/v1/tasks/user/${userId}?${queryString}` : `/v1/tasks/user/${userId}`
     return apiClient.get<Task[]>(url)
   },
+
+  async createTasksBulk(data: { tasks: CreateTaskData[] }): Promise<Task[]> {
+    return apiClient.post<Task[]>("/v1/tasks/bulk", data)
+  },
 }

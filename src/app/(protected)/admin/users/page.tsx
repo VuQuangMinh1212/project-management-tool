@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Users, Search, Plus, Edit, Trash2, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/auth/useAuth";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -46,6 +56,7 @@ import * as z from "zod";
 import { useModernToast } from "@/components/ui/modern-toast-provider";
 import { EditUserModal } from "@/components/ui/edit-user-modal";
 import { ViewUserModal } from "@/components/ui/view-user-modal";
+import ChangePasswordModal from "@/components/ui/change-password-modal";
 import { userService } from "@/services/api/users";
 import type { User } from "@/types/auth";
 
@@ -72,6 +83,7 @@ type CreateUserForm = z.infer<typeof createUserSchema>;
 
 export default function AdminUsersPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const toast = useModernToast();
   
   if (!user || user.role !== "admin") {
@@ -86,6 +98,8 @@ export default function AdminUsersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [viewingUserId, setViewingUserId] = useState<string | null>(null);
+  const [changePasswordUserId, setChangePasswordUserId] = useState<string | null>(null);
+  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
 
   const {
     register,
@@ -140,15 +154,14 @@ export default function AdminUsersPage() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
-      try {
-        await userService.deleteUser(userId);
-        toast.success("Xóa người dùng thành công!");
-        fetchUsers(roleFilter === "all" ? undefined : roleFilter);
-      } catch (error: any) {
-        toast.error("Không thể xóa người dùng");
-      }
+    try {
+      await userService.deleteUser(userId);
+      toast.success("Xóa người dùng thành công!");
+      fetchUsers(roleFilter === "all" ? undefined : roleFilter);
+    } catch (error: any) {
+      toast.error("Không thể xóa người dùng");
     }
+    setDeleteUserId(null);
   };
 
   return (
@@ -312,7 +325,7 @@ export default function AdminUsersPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.map((user) => (
-                    <TableRow key={user.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setViewingUserId(user.id)}>
+                    <TableRow key={user.id} className="cursor-pointer hover:bg-muted/50" onClick={() => router.push(`/admin/users/${user.id}`)}>
                       <TableCell>
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-8 w-8">
@@ -352,8 +365,16 @@ export default function AdminUsersPage() {
                           </Button>
                           <Button 
                             variant="outline" 
+                            size="sm"
+                            onClick={() => setChangePasswordUserId(user.id)}
+                            className="text-blue-600 hover:text-blue-700"
+                          >
+                            <Lock className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="outline" 
                             size="sm" 
-                            onClick={() => handleDeleteUser(user.id)}
+                            onClick={() => setDeleteUserId(user.id)}
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -385,6 +406,34 @@ export default function AdminUsersPage() {
           onClose={() => setViewingUserId(null)}
         />
       )}
+
+      {changePasswordUserId && (
+        <ChangePasswordModal
+          isOpen={!!changePasswordUserId}
+          onClose={() => setChangePasswordUserId(null)}
+          userId={changePasswordUserId}
+        />
+      )}
+
+      <AlertDialog open={!!deleteUserId} onOpenChange={() => setDeleteUserId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xác nhận xóa người dùng</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteUserId && handleDeleteUser(deleteUserId)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Xóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
