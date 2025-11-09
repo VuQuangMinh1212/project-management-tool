@@ -285,7 +285,20 @@ export default function ProjectsPage() {
                     <TableCell>
                       {project.endDate ? format(new Date(project.endDate), 'dd/MM/yyyy') : 'Chưa xác định'}
                     </TableCell>
-                    <TableCell>{project.managerId}</TableCell>
+                    <TableCell>
+                      {project.managers && project.managers.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {project.managers.map((manager, index) => (
+                            <span key={manager.id} className="text-sm">
+                              {manager.fullName}
+                              {index < project.managers!.length - 1 && ', '}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">Chưa có</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                         <Button 

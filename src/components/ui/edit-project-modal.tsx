@@ -54,6 +54,20 @@ export default function EditProjectModal({ isOpen, project, onClose, onSuccess }
       })
       setStartDate(new Date(project.startDate))
       setEndDate(project.endDate ? new Date(project.endDate) : undefined)
+      
+      if (project.managers && project.managers.length > 0) {
+        const projectManagers = project.managers.map(m => ({
+          id: m.id,
+          fullName: m.fullName,
+          email: m.email,
+          role: m.role as "admin" | "manager" | "employee",
+          avatarUrl: m.avatarUrl,
+          isActive: m.isActive,
+          createdAt: m.createdAt,
+          updatedAt: m.updatedAt
+        }))
+        setSelectedManagers(projectManagers)
+      }
     }
   }, [project])
 

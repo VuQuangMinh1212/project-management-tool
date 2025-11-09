@@ -3,11 +3,22 @@ export interface Project {
   name: string
   description?: string
   managerId: string
+  managerName?: string
   status: ProjectStatus
   startDate: string
   endDate?: string
   createdAt: string
   updatedAt: string
+  managers?: {
+    id: string
+    email: string
+    fullName: string
+    role: string
+    avatarUrl?: string
+    isActive: boolean
+    createdAt: string
+    updatedAt: string
+  }[]
 }
 
 export enum ProjectStatus {

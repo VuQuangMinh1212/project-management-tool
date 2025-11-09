@@ -99,7 +99,18 @@ export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewPro
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">ID: {project.managerId}</p>
+                  {project.managers && project.managers.length > 0 ? (
+                    <div className="space-y-1">
+                      {project.managers.map((manager) => (
+                        <div key={manager.id} className="text-sm">
+                          <p className="font-medium">{manager.fullName}</p>
+                          <p className="text-muted-foreground">{manager.email}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Chưa có người quản lý</p>
+                  )}
                 </CardContent>
               </Card>
 
@@ -149,10 +160,6 @@ export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewPro
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">ID dự án:</span>
-                  <span className="font-mono">{project.id}</span>
-                </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Tạo lúc:</span>
                   <span>{format(new Date(project.createdAt), 'dd/MM/yyyy HH:mm')}</span>
