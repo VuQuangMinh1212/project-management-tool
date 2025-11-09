@@ -1,45 +1,23 @@
 "use client"
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { usersService } from "@/services/api/users"
-import type { CreateUserData, UpdateUserData } from "@/types/user"
+import { userService, CreateUserData, UpdateUserData } from "@/services/api/users"
+import type { User } from "@/types/auth"
 
 // Get all users
-export function useUsers(filters?: {
-  role?: string
-  department?: string
-  status?: string
-  search?: string
-}) {
-  return useQuery({
-    queryKey: ["users", filters],
-    queryFn: () => usersService.getUsers(filters),
+export function useUsers(role?: string) {
+  return useQuery<User[], Error>({
+    queryKey: ['users', role],
+    queryFn: () => userService.getUsers(role),
   })
 }
 
 // Get single user
 export function useUser(userId: string) {
-  return useQuery({
+  return useQuery<User, Error>({
     queryKey: ["users", userId],
-    queryFn: () => usersService.getUserById(userId),
+    queryFn: () => userService.getUser(userId),
     enabled: !!userId,
-  })
-}
-
-// Get current user profile
-export function useProfile() {
-  return useQuery({
-    queryKey: ["profile"],
-    queryFn: () => usersService.getProfile(),
-  })
-}
-
-// Get team members
-export function useTeamMembers(teamId?: string) {
-  return useQuery({
-    queryKey: ["team-members", teamId],
-    queryFn: () => usersService.getTeamMembers(teamId),
-    enabled: !!teamId,
   })
 }
 
@@ -48,9 +26,14 @@ export function useCreateUser() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (userData: CreateUserData) => usersService.createUser(userData),
+    mutationFn: (userData: CreateUserData) => userService.createUser(userData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] })
+      queryClient.invalidateQueries({
+        queryKey: ["users"],
+      })
+    },
+    onError: (error: Error) => {
+      console.error("Error creating user:", error)
     },
   })
 }
@@ -60,23 +43,15 @@ export function useUpdateUser() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ userId, data }: { userId: string; data: UpdateUserData }) => usersService.updateUser(userId, data),
-    onSuccess: (updatedUser) => {
-      queryClient.invalidateQueries({ queryKey: ["users"] })
-      queryClient.setQueryData(["users", updatedUser.id], updatedUser)
+    mutationFn: ({ userId, data }: { userId: string; data: UpdateUserData }) => userService.updateUser(userId, data),
+    onSuccess: (updatedUser, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["users"],
+      })
+      queryClient.setQueryData(["users", variables.userId], updatedUser)
     },
-  })
-}
-
-// Update profile mutation
-export function useUpdateProfile() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: UpdateUserData) => usersService.updateProfile(data),
-    onSuccess: (updatedProfile) => {
-      queryClient.setQueryData(["profile"], updatedProfile)
-      queryClient.invalidateQueries({ queryKey: ["users"] })
+    onError: (error: Error) => {
+      console.error("Error updating user:", error)
     },
   })
 }
@@ -86,54 +61,37 @@ export function useDeleteUser() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (userId: string) => usersService.deleteUser(userId),
+    mutationFn: (userId: string) => userService.deleteUser(userId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] })
+      queryClient.invalidateQueries({
+        queryKey: ["users"],
+      })
+    },
+    onError: (error: Error) => {
+      console.error("Error deleting user:", error)
     },
   })
 }
 
-// Change user status mutation
-export function useChangeUserStatus() {
+// Update user role
+export function useUpdateUserRole() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ userId, status }: { userId: string; status: "active" | "inactive" | "suspended" }) =>
-      usersService.changeUserStatus(userId, status),
+    mutationFn: ({ userId, role }: { userId: string; role: string }) => userService.updateUserRole(userId, role),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] })
+      queryClient.invalidateQueries({
+        queryKey: ["users"],
+      })
     },
   })
 }
 
-// Reset user password mutation
-export function useResetUserPassword() {
-  return useMutation({
-    mutationFn: (userId: string) => usersService.resetPassword(userId),
-  })
-}
-
-// Get user activity
-export function useUserActivity(
-  userId: string,
-  filters?: {
-    startDate?: string
-    endDate?: string
-    type?: string
-  },
-) {
-  return useQuery({
-    queryKey: ["user-activity", userId, filters],
-    queryFn: () => usersService.getUserActivity(userId, filters),
-    enabled: !!userId,
-  })
-}
-
-// Get user statistics
+// Get user stats
 export function useUserStats(userId: string) {
   return useQuery({
     queryKey: ["user-stats", userId],
-    queryFn: () => usersService.getUserStats(userId),
+    queryFn: () => userService.getUserStats(userId),
     enabled: !!userId,
   })
 }
