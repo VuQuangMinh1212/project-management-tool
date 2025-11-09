@@ -2,11 +2,18 @@ import { apiClient } from "@/lib/api/client"
 import type { User } from "@/types/auth"
 
 export interface CreateUserData {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   email: string;
   passwordHash: string;
   role: "admin" | "manager" | "employee";
+  avatarUrl?: string;
+}
+
+export interface UpdateUserData {
+  fullName?: string;
+  email?: string;
+  passwordHash?: string;
+  role?: "admin" | "manager" | "employee";
   avatarUrl?: string;
 }
 
@@ -39,7 +46,7 @@ export const userService = {
     return apiClient.get(`/users/${id}`)
   },
 
-  async updateUser(id: string, data: Partial<User>): Promise<User> {
+  async updateUser(id: string, data: UpdateUserData): Promise<User> {
     return apiClient.patch(`/users/${id}`, data)
   },
 

@@ -44,6 +44,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useModernToast } from "@/components/ui/modern-toast-provider";
+import { EditUserModal } from "@/components/ui/edit-user-modal";
+import { ViewUserModal } from "@/components/ui/view-user-modal";
 import { userService } from "@/services/api/users";
 import type { User } from "@/types/auth";
 
@@ -60,8 +62,7 @@ const roleColors = {
 };
 
 const createUserSchema = z.object({
-  firstName: z.string().min(2, "Họ phải có ít nhất 2 ký tự"),
-  lastName: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
+  fullName: z.string().min(2, "Họ tên phải có ít nhất 2 ký tự"),
   email: z.string().email("Email không hợp lệ"),
   password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
   role: z.enum(["admin", "manager", "employee"]),
@@ -83,6 +84,8 @@ export default function AdminUsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [viewingUserId, setViewingUserId] = useState<string | null>(null);
 
   const {
     register,
@@ -111,7 +114,7 @@ export default function AdminUsersPage() {
   }, [roleFilter]);
 
   const filteredUsers = users.filter((user) =>
-    user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -119,8 +122,7 @@ export default function AdminUsersPage() {
     try {
       setIsSubmitting(true);
       const createUserData = {
-        firstName: data.firstName,
-        lastName: data.lastName,
+        fullName: data.fullName,
         email: data.email,
         passwordHash: data.password,
         role: data.role,
@@ -188,28 +190,15 @@ export default function AdminUsersPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">Họ</Label>
+                    <Label htmlFor="fullName">Họ tên</Label>
                     <Input
-                      id="firstName"
-                      placeholder="Nhập họ"
-                      {...register("firstName")}
-                      className={errors.firstName ? "border-red-500" : ""}
+                      id="fullName"
+                      placeholder="Nhập họ tên"
+                      {...register("fullName")}
+                      className={errors.fullName ? "border-red-500" : ""}
                     />
-                    {errors.firstName && (
-                      <p className="text-sm text-red-600">{errors.firstName.message}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Tên</Label>
-                    <Input
-                      id="lastName"
-                      placeholder="Nhập tên"
-                      {...register("lastName")}
-                      className={errors.lastName ? "border-red-500" : ""}
-                    />
-                    {errors.lastName && (
-                      <p className="text-sm text-red-600">{errors.lastName.message}</p>
+                    {errors.fullName && (
+                      <p className="text-sm text-red-600">{errors.fullName.message}</p>
                     )}
                   </div>
 
@@ -323,17 +312,17 @@ export default function AdminUsersPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.map((user) => (
-                    <TableRow key={user.id}>
+                    <TableRow key={user.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setViewingUserId(user.id)}>
                       <TableCell>
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={user.avatarUrl} alt={user.name} />
+                            <AvatarImage src={user.avatarUrl} alt={user.fullName} />
                             <AvatarFallback>
-                              {user.name?.charAt(0)?.toUpperCase()}
+                              {user.fullName?.charAt(0)?.toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium">{user.name}</div>
+                            <div className="font-medium">{user.fullName}</div>
                             <div className="text-sm text-gray-500">{user.email}</div>
                           </div>
                         </div>
@@ -353,8 +342,12 @@ export default function AdminUsersPage() {
                         {user.createdAt ? new Date(user.createdAt).toLocaleDateString("vi-VN") : "-"}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm">
+                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => setEditingUser(user)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 
@@ -375,6 +368,23 @@ export default function AdminUsersPage() {
           </CardContent>
         </Card>
       </div>
+
+      {editingUser && (
+        <EditUserModal
+          user={editingUser}
+          isOpen={!!editingUser}
+          onClose={() => setEditingUser(null)}
+          onSuccess={() => fetchUsers(roleFilter === "all" ? undefined : roleFilter)}
+        />
+      )}
+
+      {viewingUserId && (
+        <ViewUserModal
+          userId={viewingUserId}
+          isOpen={!!viewingUserId}
+          onClose={() => setViewingUserId(null)}
+        />
+      )}
     </div>
   );
 }

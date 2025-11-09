@@ -8,14 +8,12 @@ export enum UserRole {
 export interface User {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   role: UserRole | "employee" | "manager" | "admin";
   avatarUrl?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  name?: string;
 }
 
 export interface AuthState {
@@ -34,8 +32,7 @@ export interface LoginCredentials {
 export interface RegisterData {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   role?: UserRole;
 }
 
@@ -44,11 +41,12 @@ export interface RegisterCredentials extends RegisterData {}
 export interface AuthResponse {
   access_token: string;
   refresh_token: string;
+  expires_in: number;
+  token_type: string;
   user: {
     id: string;
     email: string;
-    firstName: string;
-    lastName: string;
+    fullName: string;
     role: UserRole;
     avatarUrl?: string;
   };

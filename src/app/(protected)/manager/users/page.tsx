@@ -75,7 +75,7 @@ export default function ManagerUsersPage() {
   }, [roleFilter]);
 
   const filteredUsers = users.filter((user) =>
-    user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -162,13 +162,13 @@ export default function ManagerUsersPage() {
                       <TableCell>
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={user.avatarUrl} alt={user.name} />
+                            <AvatarImage src={user.avatarUrl} alt={user.fullName} />
                             <AvatarFallback>
-                              {user.name?.charAt(0)?.toUpperCase()}
+                              {user.fullName?.charAt(0)?.toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium">{user.name}</div>
+                            <div className="font-medium">{user.fullName}</div>
                             <div className="text-sm text-gray-500">{user.email}</div>
                           </div>
                         </div>

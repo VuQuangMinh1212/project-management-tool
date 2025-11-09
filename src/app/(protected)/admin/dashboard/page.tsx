@@ -156,12 +156,12 @@ export default function AdminDashboardPage() {
                       <div key={user.id} className="flex items-center space-x-4">
                         <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
                           <span className="text-sm font-medium text-gray-600">
-                            {user.name?.charAt(0)?.toUpperCase()}
+                            {user.fullName?.charAt(0)?.toUpperCase()}
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">
-                            {user.name}
+                            {user.fullName}
                           </p>
                           <p className="text-sm text-gray-500 truncate">{user.email}</p>
                         </div>

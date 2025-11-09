@@ -120,11 +120,11 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="border-t p-4">
         <div className={cn("flex items-center", collapsed ? "justify-center" : "space-x-3")}>
           <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-            {user?.name?.charAt(0).toUpperCase() || "U"}
+            {user?.fullName?.charAt(0).toUpperCase() || "U"}
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.name}</p>
+              <p className="text-sm font-medium truncate">{user?.fullName}</p>
               <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
             </div>
           )}

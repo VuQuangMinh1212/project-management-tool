@@ -18,8 +18,7 @@ import { ROUTES } from "@/constants/routes"
 
 const registerSchema = z
   .object({
-    firstName: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
-    lastName: z.string().min(2, "Họ phải có ít nhất 2 ký tự"),
+    fullName: z.string().min(2, "Họ tên phải có ít nhất 2 ký tự"),
     email: z.string().email("Vui lòng nhập địa chỉ email hợp lệ"),
     password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
     confirmPassword: z.string(),
@@ -78,28 +77,15 @@ export function RegisterForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">Tên</Label>
-              <Input
-                id="firstName"
-                placeholder="John"
-                {...register("firstName")}
-                className={errors.firstName ? "border-red-500" : ""}
-              />
-              {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Họ</Label>
-              <Input
-                id="lastName"
-                placeholder="Doe"
-                {...register("lastName")}
-                className={errors.lastName ? "border-red-500" : ""}
-              />
-              {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="fullName">Họ tên</Label>
+            <Input
+              id="fullName"
+              placeholder="Nguyễn Văn An"
+              {...register("fullName")}
+              className={errors.fullName ? "border-red-500" : ""}
+            />
+            {errors.fullName && <p className="text-sm text-red-500">{errors.fullName.message}</p>}
           </div>
 
           <div className="space-y-2">

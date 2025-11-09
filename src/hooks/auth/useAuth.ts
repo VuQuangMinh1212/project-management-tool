@@ -46,7 +46,6 @@ export const useAuth = create<AuthStore>()(
 
           const user: User = {
             ...response.user,
-            name: `${response.user.firstName} ${response.user.lastName}`,
             isActive: true,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -104,7 +103,6 @@ export const useAuth = create<AuthStore>()(
 
           const user: User = {
             ...response.user,
-            name: `${response.user.firstName} ${response.user.lastName}`,
             isActive: true,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -223,7 +221,6 @@ export const useAuth = create<AuthStore>()(
               const response = await authService.refreshToken(refreshToken);
               const fullUser: User = {
                 ...response.user,
-                name: `${response.user.firstName} ${response.user.lastName}`,
                 isActive: true,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
