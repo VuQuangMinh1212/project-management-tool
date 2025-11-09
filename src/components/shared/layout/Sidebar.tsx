@@ -82,6 +82,11 @@ export function Sidebar({ className }: SidebarProps) {
       href: ROUTES.ADMIN.PROJECTS,
       icon: FolderOpen,
     },
+    {
+      title: "Quản lý công việc",
+      href: ROUTES.ADMIN.TASKS,
+      icon: CheckSquare,
+    },
   ]
 
   const getNavItems = () => {

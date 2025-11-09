@@ -62,7 +62,7 @@ export default function UserDetailModal({ isOpen, userId, onClose }: UserDetailM
 
   const handleNavigateToUser = () => {
     if (user) {
-      router.push(`/admin/users`)
+      router.push(`/admin/users?userId=${user.id}`)
       onClose()
     }
   }

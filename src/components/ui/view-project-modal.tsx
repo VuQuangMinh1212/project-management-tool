@@ -108,7 +108,7 @@ export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewPro
                           onClick={() => setSelectedUserId(manager.id)}
                         >
                           <p className="font-medium text-blue-600 hover:text-blue-800">{manager.fullName}</p>
-                          <p className="text-muted-foreground">{manager.email}</p>
+                          <p className="text-muted-foreground truncate">{manager.email}</p>
                         </div>
                       ))}
                     </div>

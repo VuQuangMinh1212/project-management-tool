@@ -19,6 +19,7 @@ export const ROUTES = {
     DASHBOARD: "/admin/dashboard",
     USERS: "/admin/users",
     PROJECTS: "/admin/projects",
+    TASKS: "/admin/tasks",
   },
 } as const;
 
@@ -38,7 +39,7 @@ export const MANAGER_ROUTES = [
   ROUTES.MANAGER.PROJECTS,
 ];
 
-export const ADMIN_ROUTES = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.USERS, ROUTES.ADMIN.PROJECTS];
+export const ADMIN_ROUTES = [ROUTES.ADMIN.DASHBOARD, ROUTES.ADMIN.USERS, ROUTES.ADMIN.PROJECTS, ROUTES.ADMIN.TASKS];
 
 export const PROTECTED_ROUTES = [
   ...STAFF_ROUTES,
