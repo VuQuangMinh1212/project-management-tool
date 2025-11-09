@@ -14,20 +14,8 @@ interface ProtectedLayoutProps {
 }
 
 export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
-  const { isAuthenticated, isLoading, initialize } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        await initialize();
-      } catch (error) {
-        console.error("Auth initialization failed:", error);
-      }
-    };
-    
-    initAuth();
-  }, []); // Empty dependency array - only run once
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

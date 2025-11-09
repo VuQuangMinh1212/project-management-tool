@@ -13,6 +13,7 @@ import type {
 } from "@/types/auth";
 
 interface AuthStore extends AuthState {
+  initialized: boolean;
   login: (
     credentials: LoginCredentials & { rememberMe?: boolean }
   ) => Promise<void>;
@@ -32,6 +33,7 @@ export const useAuth = create<AuthStore>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      initialized: false,
 
       login: async (
         credentials: LoginCredentials & { rememberMe?: boolean }
@@ -166,6 +168,7 @@ export const useAuth = create<AuthStore>()(
             isAuthenticated: false,
             isLoading: false,
             error: null,
+            initialized: false,
           });
         }
       },
@@ -184,6 +187,9 @@ export const useAuth = create<AuthStore>()(
 
       initialize: async () => {
         if (typeof window === "undefined") return;
+        
+        const { initialized } = get();
+        if (initialized) return;
 
         set({ isLoading: true });
 
@@ -204,6 +210,7 @@ export const useAuth = create<AuthStore>()(
             token,
             isAuthenticated: true,
             isLoading: false,
+            initialized: true,
           });
           return;
         }
@@ -234,6 +241,7 @@ export const useAuth = create<AuthStore>()(
                 token: response.access_token,
                 isAuthenticated: true,
                 isLoading: false,
+                initialized: true,
               });
               return;
             } catch (error) {
@@ -249,6 +257,7 @@ export const useAuth = create<AuthStore>()(
           token: null,
           isAuthenticated: false,
           isLoading: false,
+          initialized: true,
         });
       },
     }),
