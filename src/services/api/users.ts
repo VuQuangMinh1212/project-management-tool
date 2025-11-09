@@ -1,6 +1,15 @@
 import { apiClient } from "@/lib/api/client"
 import type { User } from "@/types/auth"
 
+export interface CreateUserData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  passwordHash: string;
+  role: "admin" | "manager" | "employee";
+  avatarUrl?: string;
+}
+
 export interface UserFilters {
   role?: string
   status?: string
@@ -16,9 +25,14 @@ export interface UsersResponse {
   totalPages: number
 }
 
-export const usersService = {
-  async getUsers(filters?: UserFilters): Promise<UsersResponse> {
-    return apiClient.get("/users", { params: filters })
+export const userService = {
+  async getUsers(role?: string): Promise<User[]> {
+    const url = role ? `/users?role=${role}` : "/users";
+    return apiClient.get<User[]>(url);
+  },
+
+  async createUser(data: CreateUserData): Promise<User> {
+    return apiClient.post<User>("/users", data);
   },
 
   async getUser(id: string): Promise<User> {

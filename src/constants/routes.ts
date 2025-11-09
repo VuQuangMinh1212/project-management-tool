@@ -12,6 +12,7 @@ export const ROUTES = {
     DASHBOARD: "/manager/dashboard",
     TEAM: "/manager/team",
     APPROVALS: "/manager/approvals",
+    USERS: "/manager/users",
   },
 } as const;
 
@@ -27,6 +28,7 @@ export const MANAGER_ROUTES = [
   ROUTES.MANAGER.DASHBOARD,
   ROUTES.MANAGER.TEAM,
   ROUTES.MANAGER.APPROVALS,
+  ROUTES.MANAGER.USERS,
 ];
 
 export const PROTECTED_ROUTES = [

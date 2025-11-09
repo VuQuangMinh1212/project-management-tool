@@ -1,3 +1,26 @@
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  name: string;
+  role: "admin" | "manager" | "employee";
+  avatarUrl?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateUserData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  passwordHash: string;
+  role: "admin" | "manager" | "employee";
+  avatarUrl?: string;
+  password?: string;
+}
+
 export interface UserProfile {
   id: string
   email: string

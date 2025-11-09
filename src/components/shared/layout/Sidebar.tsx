@@ -54,9 +54,14 @@ export function Sidebar({ className }: SidebarProps) {
       href: ROUTES.MANAGER.APPROVALS,
       icon: CheckSquare,
     },
+    {
+      title: "Quản lý người dùng",
+      href: ROUTES.MANAGER.USERS,
+      icon: User,
+    },
   ]
 
-  const navItems = user?.role === UserRole.MANAGER ? managerNavItems : staffNavItems
+  const navItems = (user?.role === "manager" || user?.role === "admin") ? managerNavItems : staffNavItems
 
   return (
     <div
