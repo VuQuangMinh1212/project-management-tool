@@ -20,7 +20,7 @@ import { userService } from '@/services/api/users';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { toast } from 'sonner';
 
-const changePasswordSchema = z.object({
+const changePasswordSchemaWithCurrent = z.object({
   currentPassword: z.string().min(1, 'Vui lòng nhập mật khẩu hiện tại'),
   newPassword: z.string().min(6, 'Mật khẩu mới phải có ít nhất 6 ký tự'),
   confirmPassword: z.string().min(6, 'Vui lòng xác nhận mật khẩu'),
@@ -29,7 +29,15 @@ const changePasswordSchema = z.object({
   path: ['confirmPassword'],
 });
 
-type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
+const changePasswordSchemaWithoutCurrent = z.object({
+  newPassword: z.string().min(6, 'Mật khẩu mới phải có ít nhất 6 ký tự'),
+  confirmPassword: z.string().min(6, 'Vui lòng xác nhận mật khẩu'),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: 'Mật khẩu xác nhận không khớp',
+  path: ['confirmPassword'],
+});
+
+type ChangePasswordFormData = z.infer<typeof changePasswordSchemaWithCurrent>;
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -44,13 +52,15 @@ export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangeP
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const isAdminChanging = !!userId;
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm<ChangePasswordFormData>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(isAdminChanging ? changePasswordSchemaWithoutCurrent : changePasswordSchemaWithCurrent),
   });
 
   const onSubmit = async (data: ChangePasswordFormData) => {
@@ -88,38 +98,42 @@ export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangeP
             <span>Đổi mật khẩu</span>
           </DialogTitle>
           <DialogDescription>
-            Nhập mật khẩu hiện tại và mật khẩu mới để thay đổi.
+            {isAdminChanging 
+              ? 'Nhập mật khẩu mới cho người dùng này.'
+              : 'Nhập mật khẩu hiện tại và mật khẩu mới để thay đổi.'}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
-            <div className="relative">
-              <Input
-                id="currentPassword"
-                type={showCurrentPassword ? 'text' : 'password'}
-                {...register('currentPassword')}
-                className={errors.currentPassword ? 'border-red-500' : ''}
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-              >
-                {showCurrentPassword ? (
-                  <EyeOff className="h-4 w-4 text-muted-foreground" />
-                ) : (
-                  <Eye className="h-4 w-4 text-muted-foreground" />
-                )}
-              </Button>
+          {!isAdminChanging && (
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
+              <div className="relative">
+                <Input
+                  id="currentPassword"
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  {...register('currentPassword')}
+                  className={errors.currentPassword ? 'border-red-500' : ''}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                >
+                  {showCurrentPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
+              </div>
+              {errors.currentPassword && (
+                <p className="text-sm text-red-500">{errors.currentPassword.message}</p>
+              )}
             </div>
-            {errors.currentPassword && (
-              <p className="text-sm text-red-500">{errors.currentPassword.message}</p>
-            )}
-          </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="newPassword">Mật khẩu mới</Label>
