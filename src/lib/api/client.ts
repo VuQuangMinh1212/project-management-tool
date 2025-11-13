@@ -1,6 +1,7 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
 import { enhancedTokenStorage } from "@/lib/auth/enhanced-token-storage";
 import { tokenRefreshService } from "@/lib/auth/token-refresh";
+import { isTokenExpired } from "@/lib/utils/jwt";
 import toast from "react-hot-toast";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/v1";
@@ -35,10 +36,22 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401) {
-          enhancedTokenStorage.clearTokens();
-          window.location.href = "/login";
-          return Promise.reject(error);
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          const newToken = await tokenRefreshService.refreshAccessToken();
+          
+          if (newToken) {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return this.client(originalRequest);
+          } else {
+            enhancedTokenStorage.clearTokens();
+            if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+              window.location.href = "/login";
+            }
+          }
         }
 
         if (error.response?.status >= 500) {

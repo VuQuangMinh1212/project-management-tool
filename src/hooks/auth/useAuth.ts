@@ -91,7 +91,7 @@ export const useAuth = create<AuthStore>()(
             isLoading: false,
             error: errorMessage,
           });
-          throw error;
+          return Promise.reject(new Error(errorMessage));
         }
       },
 
@@ -146,11 +146,11 @@ export const useAuth = create<AuthStore>()(
             isLoading: false,
             error: errorMessage,
           });
-          throw error;
+          return Promise.reject(new Error(errorMessage));
         }
       },
 
-      logout: async () => {
+      logout: () => {
         try {
           const refreshToken = enhancedTokenStorage.getRefreshToken();
           if (refreshToken) {
