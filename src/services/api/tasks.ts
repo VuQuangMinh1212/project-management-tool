@@ -13,7 +13,6 @@ export const tasksService = {
     projectId?: string;
     priority?: string;
     search?: string;
-    weekSubmittedFor?: string;
     isDraft?: boolean;
     page?: number;
     limit?: number;
@@ -136,7 +135,6 @@ export const tasksService = {
       assigneeId?: string;
       priority?: string;
       search?: string;
-      weekSubmittedFor?: string;
       isDraft?: boolean;
       page?: number;
       limit?: number;
@@ -167,7 +165,6 @@ export const tasksService = {
       status?: string;
       priority?: string;
       search?: string;
-      weekSubmittedFor?: string;
       isDraft?: boolean;
       page?: number;
       limit?: number;

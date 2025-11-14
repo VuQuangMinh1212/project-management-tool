@@ -12,7 +12,6 @@ export interface Task {
   projectId: string;
   dueDate?: string;
   estimatedHours?: number;
-  weekSubmittedFor?: string;
   createdAt: string;
   updatedAt: string;
   assignee?: {
@@ -67,7 +66,6 @@ export interface CreateTaskData {
   priority: string;
   dueDate?: string;
   estimatedHours?: number;
-  weekSubmittedFor?: string;
   isDraft?: boolean;
   parentTaskId?: string;
 }
@@ -80,7 +78,6 @@ export interface UpdateTaskData {
   priority?: string;
   dueDate?: string;
   estimatedHours?: number;
-  weekSubmittedFor?: string;
   isDraft?: boolean;
   parentTaskId?: string;
   status?: string;
@@ -94,7 +91,6 @@ export interface TaskBatch {
   id: string;
   staffId: string;
   staffName: string;
-  weekSubmittedFor: string;
   submittedAt: string;
   status: "pending" | "approved" | "rejected" | "partial";
   taskIds: string[];

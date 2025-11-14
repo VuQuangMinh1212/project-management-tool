@@ -58,7 +58,6 @@ const createTaskSchema = z.object({
   priority: z.string().min(1, 'Phải chọn độ ưu tiên'),
   dueDate: z.date().optional(),
   estimatedHours: z.number().min(0).optional(),
-  weekSubmittedFor: z.string().optional(),
   isDraft: z.boolean().optional().default(false),
 });
 
@@ -82,22 +81,6 @@ export default function CreateTaskModal({ isOpen, onClose, onSuccess }: CreateTa
     const today = new Date();
     const friday = nextFriday(addWeeks(today, 1));
     return friday;
-  };
-
-  const getWeekOptions = () => {
-    const options = [];
-    const today = new Date();
-    for (let i = 0; i < 8; i++) {
-      const date = addWeeks(today, i);
-      const weekNum = getISOWeek(date);
-      const year = getYear(date);
-      const weekStr = `${year}-W${String(weekNum).padStart(2, '0')}`;
-      const start = startOfWeek(date, { weekStartsOn: 1 });
-      const end = addDays(start, 6);
-      const label = `${weekStr} (${format(start, 'dd/MM')} - ${format(end, 'dd/MM')})`;
-      options.push({ value: weekStr, label });
-    }
-    return options;
   };
 
   const {
@@ -166,7 +149,6 @@ export default function CreateTaskModal({ isOpen, onClose, onSuccess }: CreateTa
         priority: data.priority,
         dueDate: data.dueDate ? format(data.dueDate, 'yyyy-MM-dd') : undefined,
         estimatedHours: data.estimatedHours,
-        weekSubmittedFor: data.weekSubmittedFor,
         isDraft: data.isDraft,
       };
 
@@ -372,22 +354,6 @@ export default function CreateTaskModal({ isOpen, onClose, onSuccess }: CreateTa
                 {...register('estimatedHours', { valueAsNumber: true })}
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Tuần nộp</Label>
-            <Select onValueChange={(value) => setValue('weekSubmittedFor', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn tuần" />
-              </SelectTrigger>
-              <SelectContent>
-                {getWeekOptions().map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <DialogFooter>
