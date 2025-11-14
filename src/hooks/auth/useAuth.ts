@@ -1,7 +1,6 @@
 "use client";
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { UserRole } from "@/types/auth";
 import { authService } from "@/services/api/auth";
 import { enhancedTokenStorage } from "@/lib/auth/enhanced-token-storage";
@@ -25,19 +24,17 @@ interface AuthStore extends AuthState {
   initialize: () => Promise<void>;
 }
 
-export const useAuth = create<AuthStore>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
-      initialized: false,
+export const useAuth = create<AuthStore>()((set, get) => ({
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+  initialized: false,
 
-      login: async (
-        credentials: LoginCredentials & { rememberMe?: boolean }
-      ) => {
+  login: async (
+    credentials: LoginCredentials & { rememberMe?: boolean }
+  ) => {
         set({ isLoading: true, error: null });
 
         try {
@@ -254,17 +251,8 @@ export const useAuth = create<AuthStore>()(
           token: null,
           isAuthenticated: false,
           isLoading: false,
-          initialized: true,
-        });
-      },
-    }),
-    {
-      name: "auth-storage",
-      partialize: (state) => ({
-        user: state.user,
-        token: state.token,
-        isAuthenticated: state.isAuthenticated,
-      }),
-    }
-  )
+        initialized: true,
+      });
+    },
+  })
 );
