@@ -56,37 +56,16 @@ export default function ManagerUsersPage() {
   }
   
   const [users, setUsers] = useState<User[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedProject, setSelectedProject] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
-    try {
-      const data = await projectsService.getProjects();
-      setProjects(data);
-      if (data.length > 0) {
-        setSelectedProject(data[0].id);
-      }
-    } catch (error: any) {
-      toast.error("Không thể tải danh sách dự án");
-    }
-  };
 
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
       
-      if (selectedProject === "all") {
-        const data = await userService.getUsers(roleFilter === "all" ? undefined : roleFilter);
-        setUsers(data);
-      } else {
-        const data = await projectsService.getProjectEmployees(selectedProject);
+      if (user?.id) {
+        const data = await userService.getManagerEmployees(user.id);
         if (roleFilter !== "all") {
           setUsers(data.filter(u => u.role === roleFilter));
         } else {
@@ -101,10 +80,8 @@ export default function ManagerUsersPage() {
   };
 
   useEffect(() => {
-    if (selectedProject) {
-      fetchUsers();
-    }
-  }, [roleFilter, selectedProject]);
+    fetchUsers();
+  }, [roleFilter]);
 
   const filteredUsers = users.filter((user) =>
     user.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -123,20 +100,6 @@ export default function ManagerUsersPage() {
           </div>
           
           <div className="mt-6 flex flex-wrap items-center gap-4">
-            <Select value={selectedProject} onValueChange={setSelectedProject}>
-              <SelectTrigger className="w-[250px]">
-                <SelectValue placeholder="Chọn dự án" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả dự án</SelectItem>
-                {projects.map((project) => (
-                  <SelectItem key={project.id} value={project.id}>
-                    {project.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input

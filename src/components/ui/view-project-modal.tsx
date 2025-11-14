@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { CalendarIcon, User, FileText, Calendar, Clock } from 'lucide-react'
+import { CalendarIcon, User, FileText, Calendar, Clock, Users } from 'lucide-react'
 import { format } from 'date-fns'
 import { Project, ProjectStatus } from '@/types/project'
+import { User as UserType } from '@/types/user'
 import { projectsService } from '@/services'
 import { useModernToast } from '@/components/ui/modern-toast-provider'
 import UserDetailModal from '@/components/ui/user-detail-modal'
@@ -35,6 +36,7 @@ const statusLabels = {
 
 export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewProjectModalProps) {
   const [project, setProject] = useState<Project | null>(null)
+  const [employees, setEmployees] = useState<UserType[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   
@@ -43,6 +45,7 @@ export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewPro
   useEffect(() => {
     if (isOpen && projectId) {
       fetchProject()
+      fetchEmployees()
     }
   }, [isOpen, projectId])
 
@@ -57,6 +60,16 @@ export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewPro
       onClose()
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchEmployees = async () => {
+    try {
+      const data = await projectsService.getProjectEmployees(projectId)
+      setEmployees(data)
+    } catch (err) {
+      console.error('Error fetching project employees:', err)
+      // Don't show error toast for employees, just log it
     }
   }
 
@@ -155,6 +168,33 @@ export default function ViewProjectModal({ isOpen, projectId, onClose }: ViewPro
                 </CardContent>
               </Card>
             )}
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Nhân viên ({employees.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {employees.length > 0 ? (
+                  <div className="space-y-1 max-h-60 overflow-y-auto">
+                    {employees.map((employee) => (
+                      <div 
+                        key={employee.id} 
+                        className="text-sm cursor-pointer hover:bg-muted/50 p-2 rounded transition-colors"
+                        onClick={() => setSelectedUserId(employee.id)}
+                      >
+                        <p className="font-medium text-blue-600 hover:text-blue-800">{employee.fullName}</p>
+                        <p className="text-muted-foreground truncate">{employee.email}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Chưa có nhân viên</p>
+                )}
+              </CardContent>
+            </Card>
 
             <Card>
               <CardHeader className="pb-2">

@@ -58,15 +58,16 @@ export function LoginForm() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedEmail = localStorage.getItem('remembered_email');
-      const savedPassword = localStorage.getItem('remembered_password');
       const savedRememberMe = localStorage.getItem('remember_me') === 'true';
       
-      if (savedEmail) setValue('email', savedEmail);
-      if (savedPassword) setValue('password', savedPassword);
       if (savedRememberMe) {
-        setValue('rememberMe', true);
         setRememberMe(true);
+        setValue('rememberMe', true);
+        
+        const savedEmail = localStorage.getItem('remembered_email');
+        const savedPassword = localStorage.getItem('remembered_password');
+        if (savedEmail) setValue('email', savedEmail);
+        if (savedPassword) setValue('password', savedPassword);
       }
     }
   }, [setValue]);

@@ -150,7 +150,7 @@ export const useAuth = create<AuthStore>()(
         }
       },
 
-      logout: () => {
+      logout: async () => {
         try {
           const refreshToken = enhancedTokenStorage.getRefreshToken();
           if (refreshToken) {
