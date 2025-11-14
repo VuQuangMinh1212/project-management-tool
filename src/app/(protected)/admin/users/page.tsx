@@ -86,10 +86,6 @@ export default function AdminUsersPage() {
   const router = useRouter();
   const toast = useModernToast();
   
-  if (!user || user.role !== "admin") {
-    redirect("/not-found");
-  }
-  
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -117,7 +113,7 @@ export default function AdminUsersPage() {
       const data = await userService.getUsers(role);
       setUsers(data);
     } catch (error: any) {
-      toast.error("Không thể tải danh sách người dùng");
+      console.error('Error fetching users:', error);
     } finally {
       setIsLoading(false);
     }

@@ -70,7 +70,8 @@ export const tokenRefreshService = {
 
       const { access_token, refresh_token, user } = response.data;
       
-      enhancedTokenStorage.saveTokens(access_token, refresh_token, user);
+      const rememberMe = enhancedTokenStorage.getRememberMeStatus();
+      enhancedTokenStorage.saveTokens(access_token, refresh_token, user, { rememberMe });
       
       return access_token;
     } catch (error: any) {
