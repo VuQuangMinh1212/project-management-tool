@@ -5,14 +5,12 @@ import { userService } from "./api/users"
 import { reportsService } from "./api/reports"
 import { notificationsService } from "./api/notifications"
 import { projectsService } from "./api/projects"
+import { approvalsService } from "./api/approvals"
 
-// Export all services
-export { authService, tasksService, userService, reportsService, notificationsService, projectsService }
+export { authService, tasksService, userService, reportsService, notificationsService, projectsService, approvalsService }
 
-// Export API client for direct use
 export { apiClient }
 
-// Service registry for dependency injection or testing
 export const services = {
   auth: authService,
   tasks: tasksService,
@@ -20,9 +18,9 @@ export const services = {
   reports: reportsService,
   notifications: notificationsService,
   projects: projectsService,
+  approvals: approvalsService,
 } as const
 
-// Health check function
 export async function checkApiHealth(): Promise<boolean> {
   try {
     await apiClient.get("/health")

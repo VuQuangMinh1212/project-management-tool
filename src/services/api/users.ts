@@ -36,11 +36,7 @@ export const userService = {
   },
 
   async deleteUser(id: string): Promise<void> {
-    return apiClient.delete(`/v1/users/${id}`)
-  },
-
-  async inviteUser(data: { email: string; role: string }): Promise<void> {
-    return apiClient.post("/users/invite", data)
+    return apiClient.delete(`/users/${id}`)
   },
 
   async updateUserRole(id: string, role: string): Promise<User> {
@@ -56,14 +52,14 @@ export const userService = {
   },
 
   async changePassword(data: { currentPassword: string; newPassword: string }): Promise<void> {
-    return apiClient.post('/v1/auth/change-password', data)
+    return apiClient.post('/auth/change-password', data)
   },
 
   async getProjectEmployees(projectId: string): Promise<User[]> {
-    return apiClient.get<User[]>(`/v1/projects/${projectId}/employees`)
+    return apiClient.get<User[]>(`/projects/${projectId}/employees`)
   },
 
   async getManagerEmployees(managerId: string): Promise<User[]> {
-    return apiClient.get<User[]>(`/v1/users/manager/${managerId}/employees`)
+    return apiClient.get<User[]>(`/users/manager/${managerId}/employees`)
   },
 }

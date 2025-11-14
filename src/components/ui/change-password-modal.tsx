@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Lock } from 'lucide-react';
 import { userService } from '@/services/api/users';
 import { useAuth } from '@/hooks/auth/useAuth';
-import { toast } from 'sonner';
+import { useModernToast } from '@/components/ui/modern-toast-provider';
 
 const changePasswordSchemaWithCurrent = z.object({
   currentPassword: z.string().min(1, 'Vui lòng nhập mật khẩu hiện tại'),
@@ -47,6 +47,7 @@ interface ChangePasswordModalProps {
 
 export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangePasswordModalProps) {
   const { user } = useAuth();
+  const toast = useModernToast();
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);

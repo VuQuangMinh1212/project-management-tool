@@ -41,15 +41,45 @@ export const tasksService = {
   },
 
   async createTask(data: CreateTaskData): Promise<Task> {
-    return apiClient.post<Task>("/v1/tasks", data);
+    return apiClient.post<Task>("/tasks", data);
   },
 
   async updateTask(id: string, data: UpdateTaskData): Promise<Task> {
-    return apiClient.patch<Task>(`/v1/tasks/${id}`, data);
+    return apiClient.patch<Task>(`/tasks/${id}`, data);
   },
 
   async deleteTask(id: string): Promise<void> {
     return apiClient.delete(`/tasks/${id}`);
+  },
+
+  async getMyTasks(): Promise<Task[]> {
+    return apiClient.get<Task[]>("/tasks/my-tasks");
+  },
+
+  async getDraftTasks(): Promise<Task[]> {
+    return apiClient.get<Task[]>("/tasks/drafts");
+  },
+
+  async getPendingApprovals(): Promise<Task[]> {
+    return apiClient.get<Task[]>("/tasks/pending-approvals");
+  },
+
+  async getOverdueTasks(): Promise<Task[]> {
+    return apiClient.get<Task[]>("/tasks/overdue");
+  },
+
+  async getTaskStats(): Promise<{
+    total: number;
+    pending: number;
+    approved: number;
+    rejected: number;
+    completed: number;
+  }> {
+    return apiClient.get("/tasks/stats");
+  },
+
+  async getTasksByWeek(week: string): Promise<Task[]> {
+    return apiClient.get<Task[]>(`/tasks/week/${week}`);
   },
 
   async addComment(taskId: string, content: string): Promise<TaskComment> {
@@ -70,12 +100,33 @@ export const tasksService = {
     return apiClient.delete(`/tasks/${taskId}/comments/${commentId}`);
   },
 
-  async uploadAttachment(taskId: string, file: File): Promise<void> {
+  async uploadTaskImages(taskId: string, files: File[]): Promise<void> {
     const formData = new FormData();
-    formData.append("file", file);
-    return apiClient.post(`/tasks/${taskId}/attachments`, formData, {
+    files.forEach(file => formData.append("images", file));
+    return apiClient.post(`/task-images/${taskId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+  },
+
+  async updateTaskImages(taskId: string, data: { imagesToDelete?: string[], newImages?: File[] }): Promise<void> {
+    const formData = new FormData();
+    if (data.imagesToDelete) {
+      formData.append("imagesToDelete", JSON.stringify(data.imagesToDelete));
+    }
+    if (data.newImages) {
+      data.newImages.forEach(file => formData.append("newImages", file));
+    }
+    return apiClient.put(`/task-images/${taskId}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  async getTaskImages(taskId: string): Promise<any[]> {
+    return apiClient.get(`/task-images/task/${taskId}`);
+  },
+
+  async deleteTaskImage(imageId: string): Promise<void> {
+    return apiClient.delete(`/task-images/${imageId}`);
   },
 
   async getTasksByProject(
@@ -106,7 +157,7 @@ export const tasksService = {
     const queryString = queryParams.toString();
     const url = queryString
       ? `/tasks/project/${projectId}?${queryString}`
-      : `/v1/tasks/project/${projectId}`;
+      : `/tasks/project/${projectId}`;
     return apiClient.get<Task[]>(url);
   },
 
@@ -136,7 +187,7 @@ export const tasksService = {
     const queryString = queryParams.toString();
     const url = queryString
       ? `/tasks/user/${userId}?${queryString}`
-      : `/v1/tasks/user/${userId}`;
+      : `/tasks/user/${userId}`;
     return apiClient.get<Task[]>(url);
   },
 
@@ -145,6 +196,18 @@ export const tasksService = {
   },
 
   async getSubtasks(parentTaskId: string): Promise<Task[]> {
-    return apiClient.get<Task[]>(`/v1/tasks/${parentTaskId}/subtasks`);
+    return apiClient.get<Task[]>(`/tasks/${parentTaskId}/subtasks`);
+  },
+
+  async approveTask(taskId: string, reviewComment?: string): Promise<Task> {
+    return apiClient.post<Task>(`/tasks/${taskId}/approve`, { reviewComment });
+  },
+
+  async rejectTask(taskId: string, reviewComment: string): Promise<Task> {
+    return apiClient.post<Task>(`/tasks/${taskId}/reject`, { reviewComment });
+  },
+
+  async submitTasksForApproval(taskIds: string[]): Promise<void> {
+    return apiClient.post('/tasks/submit-for-approval', { taskIds });
   },
 };

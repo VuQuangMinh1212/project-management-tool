@@ -20,7 +20,7 @@ export const authService = {
   },
 
   async logout(refreshToken: string): Promise<void> {
-    return apiClient.post("/v1/auth/logout", { refresh_token: refreshToken });
+    return apiClient.post("/auth/logout", { refresh_token: refreshToken });
   },
 
   async getCurrentUser(): Promise<User> {

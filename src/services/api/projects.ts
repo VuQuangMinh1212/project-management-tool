@@ -15,7 +15,7 @@ export const projectsService = {
     if (filters?.endDateTo) params.append('endDateTo', filters.endDateTo)
     
     const queryString = params.toString()
-    const url = queryString ? `/projects?${queryString}` : '/projects'
+    const url = queryString ? `/v1/projects?${queryString}` : '/v1/projects'
     
     return apiClient.get<Project[]>(url)
   },
@@ -33,10 +33,10 @@ export const projectsService = {
   },
 
   async deleteProject(id: string): Promise<void> {
-    await apiClient.delete(`/v1/projects/${id}`)
+    await apiClient.delete(`/projects/${id}`)
   },
 
   async getProjectEmployees(projectId: string): Promise<User[]> {
-    return apiClient.get<User[]>(`/v1/projects/${projectId}/employees`)
+    return apiClient.get<User[]>(`/projects/${projectId}/employees`)
   },
 }
