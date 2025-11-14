@@ -1,5 +1,6 @@
 import { apiClient } from '@/lib/api/client'
 import { Project, CreateProjectData, UpdateProjectData, ProjectFilters } from '../../types/project'
+import type { User } from '@/types/auth'
 
 export const projectsService = {
   async getProjects(filters?: ProjectFilters): Promise<Project[]> {
@@ -33,5 +34,9 @@ export const projectsService = {
 
   async deleteProject(id: string): Promise<void> {
     await apiClient.delete(`/v1/projects/${id}`)
+  },
+
+  async getProjectEmployees(projectId: string): Promise<User[]> {
+    return apiClient.get<User[]>(`/v1/projects/${projectId}/employees`)
   },
 }

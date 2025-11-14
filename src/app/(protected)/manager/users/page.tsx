@@ -31,7 +31,9 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useModernToast } from "@/components/ui/modern-toast-provider";
 import { userService } from "@/services/api/users";
+import { projectsService } from "@/services/api/projects";
 import type { User } from "@/types/auth";
+import type { Project } from "@/types/project";
 
 const roleLabels = {
   admin: "Quản trị viên",
@@ -54,15 +56,43 @@ export default function ManagerUsersPage() {
   }
   
   const [users, setUsers] = useState<User[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchUsers = async (role?: string) => {
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const data = await projectsService.getProjects();
+      setProjects(data);
+      if (data.length > 0) {
+        setSelectedProject(data[0].id);
+      }
+    } catch (error: any) {
+      toast.error("Không thể tải danh sách dự án");
+    }
+  };
+
+  const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const data = await userService.getUsers(role);
-      setUsers(data);
+      
+      if (selectedProject === "all") {
+        const data = await userService.getUsers(roleFilter === "all" ? undefined : roleFilter);
+        setUsers(data);
+      } else {
+        const data = await projectsService.getProjectEmployees(selectedProject);
+        if (roleFilter !== "all") {
+          setUsers(data.filter(u => u.role === roleFilter));
+        } else {
+          setUsers(data);
+        }
+      }
     } catch (error: any) {
       toast.error("Không thể tải danh sách người dùng");
     } finally {
@@ -71,8 +101,10 @@ export default function ManagerUsersPage() {
   };
 
   useEffect(() => {
-    fetchUsers(roleFilter === "all" ? undefined : roleFilter);
-  }, [roleFilter]);
+    if (selectedProject) {
+      fetchUsers();
+    }
+  }, [roleFilter, selectedProject]);
 
   const filteredUsers = users.filter((user) =>
     user.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,6 +123,20 @@ export default function ManagerUsersPage() {
           </div>
           
           <div className="mt-6 flex flex-wrap items-center gap-4">
+            <Select value={selectedProject} onValueChange={setSelectedProject}>
+              <SelectTrigger className="w-[250px]">
+                <SelectValue placeholder="Chọn dự án" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả dự án</SelectItem>
+                {projects.map((project) => (
+                  <SelectItem key={project.id} value={project.id}>
+                    {project.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
