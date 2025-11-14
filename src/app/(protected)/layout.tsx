@@ -14,17 +14,16 @@ interface ProtectedLayoutProps {
 }
 
 export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, initialized } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (initialized && !isLoading && !isAuthenticated) {
       router.push(ROUTES.LOGIN);
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, initialized, router]);
 
-  // Show better loading UI for improved UX
-  if (isLoading) {
+  if (!initialized || isLoading) {
     return (
       <div className="flex h-screen bg-background">
         {/* Sidebar skeleton */}
