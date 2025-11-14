@@ -15,7 +15,7 @@ export const projectsService = {
     if (filters?.endDateTo) params.append('endDateTo', filters.endDateTo)
     
     const queryString = params.toString()
-    const url = queryString ? `/v1/projects?${queryString}` : '/v1/projects'
+    const url = queryString ? `/projects?${queryString}` : '/projects'
     
     return apiClient.get<Project[]>(url)
   },
