@@ -39,7 +39,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon, Check, ChevronsUpDown, X } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, addWeeks, nextFriday, startOfWeek, addDays, getISOWeek, getYear } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { tasksService } from '@/services/api/tasks';
@@ -78,6 +78,28 @@ export default function CreateTaskModal({ isOpen, onClose, onSuccess }: CreateTa
   const [employeeSearchOpen, setEmployeeSearchOpen] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
+  const getNextFriday = () => {
+    const today = new Date();
+    const friday = nextFriday(addWeeks(today, 1));
+    return friday;
+  };
+
+  const getWeekOptions = () => {
+    const options = [];
+    const today = new Date();
+    for (let i = 0; i < 8; i++) {
+      const date = addWeeks(today, i);
+      const weekNum = getISOWeek(date);
+      const year = getYear(date);
+      const weekStr = `${year}-W${String(weekNum).padStart(2, '0')}`;
+      const start = startOfWeek(date, { weekStartsOn: 1 });
+      const end = addDays(start, 6);
+      const label = `${weekStr} (${format(start, 'dd/MM')} - ${format(end, 'dd/MM')})`;
+      options.push({ value: weekStr, label });
+    }
+    return options;
+  };
+
   const {
     register,
     handleSubmit,
@@ -89,6 +111,8 @@ export default function CreateTaskModal({ isOpen, onClose, onSuccess }: CreateTa
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
       isDraft: false,
+      priority: 'low',
+      dueDate: getNextFriday(),
     },
   });
 
@@ -218,7 +242,7 @@ export default function CreateTaskModal({ isOpen, onClose, onSuccess }: CreateTa
 
             <div className="space-y-2">
               <Label>Độ ưu tiên *</Label>
-              <Select onValueChange={(value) => setValue('priority', value)}>
+              <Select onValueChange={(value) => setValue('priority', value)} defaultValue="low">
                 <SelectTrigger className={errors.priority ? 'border-red-500' : ''}>
                   <SelectValue placeholder="Chọn độ ưu tiên" />
                 </SelectTrigger>
@@ -351,12 +375,19 @@ export default function CreateTaskModal({ isOpen, onClose, onSuccess }: CreateTa
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="weekSubmittedFor">Tuần nộp</Label>
-            <Input
-              id="weekSubmittedFor"
-              placeholder="VD: 2025-W02"
-              {...register('weekSubmittedFor')}
-            />
+            <Label>Tuần nộp</Label>
+            <Select onValueChange={(value) => setValue('weekSubmittedFor', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn tuần" />
+              </SelectTrigger>
+              <SelectContent>
+                {getWeekOptions().map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <DialogFooter>
