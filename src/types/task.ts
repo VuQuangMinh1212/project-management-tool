@@ -35,6 +35,8 @@ export interface Task {
   statusNote?: string;
   isDraft?: boolean;
   batchId?: string;
+  parentTaskId?: string;
+  subtasks?: Task[];
 }
 
 export interface TaskAttachment {
@@ -67,6 +69,7 @@ export interface CreateTaskData {
   estimatedHours?: number;
   weekSubmittedFor?: string;
   isDraft?: boolean;
+  parentTaskId?: string;
 }
 
 export interface UpdateTaskData {
@@ -79,6 +82,7 @@ export interface UpdateTaskData {
   estimatedHours?: number;
   weekSubmittedFor?: string;
   isDraft?: boolean;
+  parentTaskId?: string;
   status?: string;
   reviewComment?: string;
   statusNote?: string;

@@ -38,7 +38,7 @@ class ApiClient {
       async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/auth/login')) {
           originalRequest._retry = true;
 
           const newToken = await tokenRefreshService.refreshAccessToken();

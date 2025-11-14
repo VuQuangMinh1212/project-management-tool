@@ -13,6 +13,9 @@ import {
   Send,
   AlertCircle,
   MessageSquare,
+  Plus,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 import {
@@ -35,6 +38,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import type { Task, UpdateTaskData, CreateTaskData } from "@/types/task";
 import { TaskStatus, TaskPriority } from "@/types/task";
 import {
@@ -50,6 +54,8 @@ import {
   formatWeekForDisplay 
 } from "@/lib/utils/weekUtils";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { tasksService } from "@/services/api/tasks";
+import CreateSubtaskModal from "@/components/ui/create-subtask-modal";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Tiêu đề là bắt buộc"),
@@ -87,6 +93,9 @@ export function TaskModal({
   const [newComment, setNewComment] = useState("");
   const [statusNote, setStatusNote] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<TaskStatus | "">("");
+  const [subtasks, setSubtasks] = useState<Task[]>([]);
+  const [showSubtasks, setShowSubtasks] = useState(false);
+  const [showCreateSubtask, setShowCreateSubtask] = useState(false);
   const isEditing = !!task;
   const isManager = userRole === "manager";
   
@@ -146,6 +155,22 @@ export function TaskModal({
   };
 
   const availableWeeks = getAvailableWeeksForSubmission();
+
+  useEffect(() => {
+    if (task && open) {
+      loadSubtasks();
+    }
+  }, [task, open]);
+
+  const loadSubtasks = async () => {
+    if (!task) return;
+    try {
+      const data = await tasksService.getSubtasks(task.id);
+      setSubtasks(data);
+    } catch (error) {
+      console.error('Error loading subtasks:', error);
+    }
+  };
 
   const {
     register,
@@ -306,15 +331,57 @@ export function TaskModal({
           <div className="space-y-6">
             {/* Task Info Display */}
             <div className="bg-gray-50 border rounded-lg p-4 space-y-3">
-              <h3 className="font-medium text-gray-900">{task.title}</h3>
-              {task.description && (
-                <p className="text-sm text-gray-600">{task.description}</p>
-              )}
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="font-medium text-gray-900">{task.title}</h3>
+                  {task.description && (
+                    <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowCreateSubtask(true)}
+                  className="ml-2"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Task con
+                </Button>
+              </div>
               <div className="flex items-center space-x-4 text-xs text-gray-500">
                 <span>Mức Độ Ưu Tiên: {TASK_PRIORITY_LABELS[task.priority]}</span>
                 {task.projectName && <span>Dự án: {task.projectName}</span>}
                 {task.estimatedHours && <span>Ước tính Giờ: {task.estimatedHours}</span>}
               </div>
+
+              {subtasks.length > 0 && (
+                <Collapsible open={showSubtasks} onOpenChange={setShowSubtasks}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                      {showSubtasks ? (
+                        <ChevronDown className="h-4 w-4 mr-2" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 mr-2" />
+                      )}
+                      Tasks con ({subtasks.length})
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-2 mt-2">
+                    {subtasks.map((subtask) => (
+                      <div
+                        key={subtask.id}
+                        className="flex items-center justify-between p-2 bg-white rounded border text-sm"
+                      >
+                        <span>{subtask.title}</span>
+                        <Badge className={TASK_STATUS_COLORS[subtask.status]}>
+                          {TASK_STATUS_LABELS[subtask.status]}
+                        </Badge>
+                      </div>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
             </div>
 
             {/* Status Update Section */}
@@ -605,6 +672,15 @@ export function TaskModal({
           </div>
         </form>
         </>
+        )}
+        
+        {task && (
+          <CreateSubtaskModal
+            isOpen={showCreateSubtask}
+            onClose={() => setShowCreateSubtask(false)}
+            onSuccess={loadSubtasks}
+            parentTask={task}
+          />
         )}
       </DialogContent>
     </Dialog>

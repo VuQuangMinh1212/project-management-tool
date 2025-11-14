@@ -165,6 +165,9 @@ export const useAuth = create<AuthStore>()((set, get) => ({
             error: null,
             initialized: false,
           });
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
         }
       },
 

@@ -69,16 +69,24 @@ export default function ChangePasswordModal({ isOpen, onClose, userId }: ChangeP
 
     setLoading(true);
     try {
-      await userService.updateUser(targetUserId, {
-        passwordHash: data.newPassword,
-      });
+      if (isAdminChanging) {
+        await userService.updateUser(targetUserId, {
+          passwordHash: data.newPassword,
+        });
+      } else {
+        await userService.changePassword({
+          currentPassword: data.currentPassword!,
+          newPassword: data.newPassword,
+        });
+      }
       
       toast.success('Đổi mật khẩu thành công');
       reset();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error changing password:', error);
-      toast.error('Không thể đổi mật khẩu. Vui lòng thử lại.');
+      const errorMsg = error?.response?.data?.message || 'Không thể đổi mật khẩu. Vui lòng thử lại.';
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

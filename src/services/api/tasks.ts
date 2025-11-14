@@ -41,11 +41,11 @@ export const tasksService = {
   },
 
   async createTask(data: CreateTaskData): Promise<Task> {
-    return apiClient.post<Task>("/tasks", data);
+    return apiClient.post<Task>("/v1/tasks", data);
   },
 
   async updateTask(id: string, data: UpdateTaskData): Promise<Task> {
-    return apiClient.patch<Task>(`/tasks/${id}`, data);
+    return apiClient.patch<Task>(`/v1/tasks/${id}`, data);
   },
 
   async deleteTask(id: string): Promise<void> {
@@ -142,5 +142,9 @@ export const tasksService = {
 
   async createTasksBulk(data: { tasks: CreateTaskData[] }): Promise<Task[]> {
     return apiClient.post<Task[]>("/tasks/bulk", data);
+  },
+
+  async getSubtasks(parentTaskId: string): Promise<Task[]> {
+    return apiClient.get<Task[]>(`/v1/tasks/${parentTaskId}/subtasks`);
   },
 };

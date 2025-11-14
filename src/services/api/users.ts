@@ -54,4 +54,16 @@ export const userService = {
   }> {
     return apiClient.get(`/users/${id}/stats`)
   },
+
+  async changePassword(data: { currentPassword: string; newPassword: string }): Promise<void> {
+    return apiClient.post('/v1/auth/change-password', data)
+  },
+
+  async getProjectEmployees(projectId: string): Promise<User[]> {
+    return apiClient.get<User[]>(`/v1/projects/${projectId}/employees`)
+  },
+
+  async getManagerEmployees(managerId: string): Promise<User[]> {
+    return apiClient.get<User[]>(`/v1/users/manager/${managerId}/employees`)
+  },
 }

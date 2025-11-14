@@ -104,7 +104,6 @@ export function LoginForm() {
         }
       }, 100);
     } catch (error: any) {
-      console.error('Login error:', error);
       const { error: authError } = useAuth.getState()
     
       if (authError) {
