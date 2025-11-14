@@ -23,8 +23,6 @@ export const tasksService = {
     if (params?.projectId) queryParams.append("projectId", params.projectId);
     if (params?.priority) queryParams.append("priority", params.priority);
     if (params?.search) queryParams.append("search", params.search);
-    if (params?.weekSubmittedFor)
-      queryParams.append("weekSubmittedFor", params.weekSubmittedFor);
     if (params?.isDraft !== undefined)
       queryParams.append("isDraft", params.isDraft.toString());
     if (params?.page) queryParams.append("page", params.page.toString());
@@ -145,8 +143,6 @@ export const tasksService = {
     if (params?.assigneeId) queryParams.append("assigneeId", params.assigneeId);
     if (params?.priority) queryParams.append("priority", params.priority);
     if (params?.search) queryParams.append("search", params.search);
-    if (params?.weekSubmittedFor)
-      queryParams.append("weekSubmittedFor", params.weekSubmittedFor);
     if (params?.isDraft !== undefined)
       queryParams.append("isDraft", params.isDraft.toString());
     if (params?.page) queryParams.append("page", params.page.toString());
@@ -174,8 +170,6 @@ export const tasksService = {
     if (params?.status) queryParams.append("status", params.status);
     if (params?.priority) queryParams.append("priority", params.priority);
     if (params?.search) queryParams.append("search", params.search);
-    if (params?.weekSubmittedFor)
-      queryParams.append("weekSubmittedFor", params.weekSubmittedFor);
     if (params?.isDraft !== undefined)
       queryParams.append("isDraft", params.isDraft.toString());
     if (params?.page) queryParams.append("page", params.page.toString());
