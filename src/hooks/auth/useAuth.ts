@@ -184,8 +184,12 @@ export const useAuth = create<AuthStore>()((set, get) => ({
         if (typeof window === "undefined") return;
         
         const { initialized } = get();
-        if (initialized) return;
+        if (initialized) {
+          console.log("Already initialized, skipping");
+          return;
+        }
 
+        console.log("Starting initialization...");
         set({ isLoading: true });
 
         const token = enhancedTokenStorage.getAccessToken();
@@ -194,12 +198,12 @@ export const useAuth = create<AuthStore>()((set, get) => ({
         console.log("Auth initialize:", { 
           hasToken: !!token, 
           hasUser: !!storedUser, 
-          isExpired: token ? enhancedTokenStorage.isTokenExpired(token) : null 
+          isExpired: token ? enhancedTokenStorage.isTokenExpired(token) : null,
+          storedUser: storedUser
         });
 
-        // If we have both token and user data stored, and token is not expired
         if (token && storedUser && !enhancedTokenStorage.isTokenExpired(token)) {
-          console.log("Restoring authentication from storage");
+          console.log("Restoring authentication from storage", { user: storedUser, token });
           set({
             user: storedUser,
             token,
@@ -207,11 +211,12 @@ export const useAuth = create<AuthStore>()((set, get) => ({
             isLoading: false,
             initialized: true,
           });
+          console.log("Auth state after restore:", get());
           return;
         }
 
-        // If token exists but is expired, try to refresh
         if (token && enhancedTokenStorage.isTokenExpired(token)) {
+          console.log("Token expired, attempting refresh");
           const refreshToken = enhancedTokenStorage.getRefreshToken();
           if (refreshToken) {
             try {
@@ -230,6 +235,7 @@ export const useAuth = create<AuthStore>()((set, get) => ({
                 { rememberMe: enhancedTokenStorage.getRememberMeStatus() }
               );
 
+              console.log("Token refreshed successfully");
               set({
                 user: fullUser,
                 token: response.access_token,
@@ -244,7 +250,7 @@ export const useAuth = create<AuthStore>()((set, get) => ({
           }
         }
 
-        // Clear tokens and set unauthenticated state
+        console.log("No valid auth, clearing tokens");
         enhancedTokenStorage.clearTokens();
         set({
           user: null,
