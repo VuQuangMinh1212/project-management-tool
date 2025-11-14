@@ -46,11 +46,12 @@ export default function UserDetailPage() {
 
   const loadUserData = async () => {
     try {
+      setLoading(true);
       const userData = await userService.getUser(userId);
       setUser(userData);
     } catch (error) {
       console.error('Error loading user:', error);
-      toast.error('Không thể tải thông tin người dùng');
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -63,7 +64,6 @@ export default function UserDetailPage() {
       setTasks(tasksData);
     } catch (error) {
       console.error('Error loading user tasks:', error);
-      toast.error('Không thể tải danh sách công việc');
     } finally {
       setLoadingTasks(false);
     }

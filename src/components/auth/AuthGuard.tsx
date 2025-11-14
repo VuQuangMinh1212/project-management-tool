@@ -13,11 +13,11 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, requiredRole, fallbackRoute }: AuthGuardProps) {
-  const { isAuthenticated, user, isLoading } = useAuth()
+  const { isAuthenticated, user, isLoading, initialized } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!isLoading) {
+    if (initialized && !isLoading) {
       if (!isAuthenticated) {
         router.push(fallbackRoute || ROUTES.LOGIN)
         return
@@ -29,9 +29,9 @@ export function AuthGuard({ children, requiredRole, fallbackRoute }: AuthGuardPr
         return
       }
     }
-  }, [isAuthenticated, user, isLoading, requiredRole, fallbackRoute, router])
+  }, [isAuthenticated, user, isLoading, initialized, requiredRole, fallbackRoute, router])
 
-  if (isLoading) {
+  if (!initialized || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
