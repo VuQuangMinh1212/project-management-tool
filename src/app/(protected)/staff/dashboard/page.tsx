@@ -118,7 +118,6 @@ export default function StaffDashboardPage() {
           assigneeName: user?.fullName || "John Doe",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          weekSubmittedFor: getCurrentWeek(),
           estimatedHours: 3,
           isDraft: true,
         },
@@ -132,7 +131,6 @@ export default function StaffDashboardPage() {
           assigneeName: user?.fullName || "John Doe",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          weekSubmittedFor: getCurrentWeek(),
           estimatedHours: 2,
           isDraft: true,
         },
@@ -146,7 +144,6 @@ export default function StaffDashboardPage() {
           assigneeName: user?.fullName || "John Doe",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          weekSubmittedFor: getCurrentWeek(),
           submittedAt: new Date().toISOString(),
           estimatedHours: 4,
         }
@@ -193,7 +190,7 @@ export default function StaffDashboardPage() {
     setTasks(prev => prev.filter(task => task.id !== taskId))
   }
 
-  const handleSubmitBatch = (taskIds: string[], weekSubmittedFor: string) => {
+  const handleSubmitBatch = (taskIds: string[]) => {
     const batchId = Date.now().toString()
     const submittedAt = new Date().toISOString()
     
@@ -205,7 +202,6 @@ export default function StaffDashboardPage() {
             isDraft: false,
             submittedAt,
             batchId,
-            weekSubmittedFor,
             updatedAt: new Date().toISOString()
           }
         : task
@@ -222,7 +218,7 @@ export default function StaffDashboardPage() {
     setEditingTask(undefined)
   }
 
-  const handleCreateBulkTasks = (weekSubmittedFor: string, tasksData: CreateTaskData[]) => {
+  const handleCreateBulkTasks = (tasksData: CreateTaskData[]) => {
     const batchId = Date.now().toString()
     const submittedAt = new Date().toISOString()
     
@@ -236,7 +232,6 @@ export default function StaffDashboardPage() {
       assigneeName: user?.fullName || "Unknown User",
       projectId: taskData.projectId,
       estimatedHours: taskData.estimatedHours,
-      weekSubmittedFor: weekSubmittedFor,
       isDraft: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -247,7 +242,7 @@ export default function StaffDashboardPage() {
     setTasks(prev => [...prev, ...newTasks])
   }
 
-  const handleSaveBulkDrafts = (weekSubmittedFor: string, tasksData: CreateTaskData[]) => {
+  const handleSaveBulkDrafts = (tasksData: CreateTaskData[]) => {
     const newTasks: Task[] = tasksData.map((taskData, index) => ({
       id: `draft-bulk-${Date.now()}-${index}`,
       title: taskData.title,
@@ -258,7 +253,6 @@ export default function StaffDashboardPage() {
       assigneeName: user?.fullName || "Unknown User",
       projectId: taskData.projectId,
       estimatedHours: taskData.estimatedHours,
-      weekSubmittedFor: weekSubmittedFor,
       isDraft: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

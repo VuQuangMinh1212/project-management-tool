@@ -45,7 +45,6 @@ const singleTaskSchema = z.object({
 });
 
 const bulkTaskSchema = z.object({
-  weekSubmittedFor: z.string().min(1, "Week selection is required"),
   tasks: z.array(singleTaskSchema).min(1, "At least one task is required"),
 });
 
@@ -54,8 +53,8 @@ type BulkTaskFormData = z.infer<typeof bulkTaskSchema>;
 interface BulkTaskCreatorProps {
   open: boolean;
   onClose: () => void;
-  onCreateBulk?: (weekSubmittedFor: string, tasks: CreateTaskData[]) => void;
-  onSaveBulkDrafts?: (weekSubmittedFor: string, tasks: CreateTaskData[]) => void;
+  onCreateBulk?: (tasks: CreateTaskData[]) => void;
+  onSaveBulkDrafts?: (tasks: CreateTaskData[]) => void;
 }
 
 export function BulkTaskCreator({
@@ -79,7 +78,6 @@ export function BulkTaskCreator({
   } = useForm<BulkTaskFormData>({
     resolver: zodResolver(bulkTaskSchema),
     defaultValues: {
-      weekSubmittedFor: getCurrentWeek(),
       tasks: [
         {
           title: "",
@@ -97,8 +95,6 @@ export function BulkTaskCreator({
     control,
     name: "tasks",
   });
-
-  const watchedWeek = watch("weekSubmittedFor");
 
   const addTask = () => {
     append({
@@ -126,11 +122,10 @@ export function BulkTaskCreator({
         ...task,
         dueDate: task.startDate,
         assigneeId: user.id,
-        weekSubmittedFor: data.weekSubmittedFor,
         isDraft: true,
       }));
       
-      await onSaveBulkDrafts(data.weekSubmittedFor, tasksData);
+      await onSaveBulkDrafts(tasksData);
       onClose();
       reset();
     } catch (error) {
@@ -149,11 +144,10 @@ export function BulkTaskCreator({
         ...task,
         dueDate: task.startDate,
         assigneeId: user.id,
-        weekSubmittedFor: data.weekSubmittedFor,
         isDraft: false,
       }));
       
-      await onCreateBulk(data.weekSubmittedFor, tasksData);
+      await onCreateBulk(tasksData);
       onClose();
       reset();
     } catch (error) {
@@ -181,29 +175,6 @@ export function BulkTaskCreator({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Week Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="weekSubmittedFor">Tuần Mục Tiêu</Label>
-            <Select
-              value={watchedWeek}
-              onValueChange={(value) => setValue("weekSubmittedFor", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn tuần" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableWeeks.map((week) => (
-                  <SelectItem key={week.value} value={week.value}>
-                    {week.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.weekSubmittedFor && (
-              <p className="text-sm text-red-600">{errors.weekSubmittedFor.message}</p>
-            )}
-          </div>
-
           {/* Task List */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">

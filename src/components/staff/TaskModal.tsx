@@ -64,7 +64,6 @@ const taskSchema = z.object({
   projectId: z.string().min(1, "Dự án là bắt buộc"),
   startDate: z.string().optional(),
   estimatedHours: z.number().min(0.5, "Tối thiểu 0.5 giờ").optional(),
-  weekSubmittedFor: z.string().min(1, "Chọn tuần là bắt buộc"),
 });
 
 type TaskFormData = z.infer<typeof taskSchema>;
@@ -191,21 +190,16 @@ export function TaskModal({
             ? format(new Date(task.dueDate), "yyyy-MM-dd")
             : "",
           estimatedHours: task.estimatedHours,
-          weekSubmittedFor: task.weekSubmittedFor || getCurrentWeek(),
         }
       : {
           priority: TaskPriority.MEDIUM,
-          weekSubmittedFor: getCurrentWeek(),
         },
   });
-
-  const watchedWeek = watch("weekSubmittedFor");
 
   useEffect(() => {
     if (open && !isEditing) {
       reset({
         priority: TaskPriority.MEDIUM,
-        weekSubmittedFor: getCurrentWeek(),
       });
     }
     
@@ -303,8 +297,6 @@ export function TaskModal({
       handleStatusUpdate(selectedStatus as TaskStatus);
     }
   };
-
-  const canSubmitForWeek = watchedWeek ? canModifyTasksForWeek(watchedWeek) : false;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -483,41 +475,6 @@ export function TaskModal({
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Week Selection */}
-          {(!isEditing || task?.status === TaskStatus.DRAFT) && (
-            <div className="space-y-2">
-              <Label htmlFor="weekSubmittedFor">Tuần Mục Tiêu</Label>
-              <Select
-                value={watchedWeek}
-                onValueChange={(value) => setValue("weekSubmittedFor", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn tuần" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableWeeks.map((week) => (
-                    <SelectItem key={week.value} value={week.value}>
-                      {week.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.weekSubmittedFor && (
-                <p className="text-sm text-red-600">{errors.weekSubmittedFor.message}</p>
-              )}
-            </div>
-          )}
-
-          {/* Submission period warning */}
-          {!canSubmitForWeek && watchedWeek && (
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Thời gian nộp cho {formatWeekForDisplay(watchedWeek)} đã kết thúc.
-              </AlertDescription>
-            </Alert>
-          )}
-
           {/* Task Title */}
           <div className="space-y-2">
             <Label htmlFor="title">Tiêu Đề Nhiệm Vụ</Label>
@@ -641,7 +598,7 @@ export function TaskModal({
             
             <div className="flex gap-2">
               {/* Save as Draft */}
-              {(!isEditing || task?.status === TaskStatus.DRAFT) && onSaveDraft && canSubmitForWeek && (
+              {(!isEditing || task?.status === TaskStatus.DRAFT) && onSaveDraft && (
                 <Button
                   type="button"
                   variant="outline"
@@ -654,7 +611,7 @@ export function TaskModal({
               )}
               
               {/* Submit Button */}
-              {canEdit() && canSubmitForWeek && (
+              {canEdit() && (
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? (
                     "Đang lưu..."

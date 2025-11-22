@@ -99,7 +99,7 @@ export const tasksService = {
 
   async uploadTaskImages(taskId: string, files: File[]): Promise<void> {
     const formData = new FormData();
-    files.forEach(file => formData.append("images", file));
+    files.forEach(file => formData.append("files", file));
     return apiClient.post(`/task-images/${taskId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
@@ -107,11 +107,11 @@ export const tasksService = {
 
   async updateTaskImages(taskId: string, data: { imagesToDelete?: string[], newImages?: File[] }): Promise<void> {
     const formData = new FormData();
-    if (data.imagesToDelete) {
-      formData.append("imagesToDelete", JSON.stringify(data.imagesToDelete));
+    if (data.imagesToDelete && data.imagesToDelete.length > 0) {
+      formData.append("deleteImageIds", data.imagesToDelete.join(','));
     }
-    if (data.newImages) {
-      data.newImages.forEach(file => formData.append("newImages", file));
+    if (data.newImages && data.newImages.length > 0) {
+      data.newImages.forEach(file => formData.append("files", file));
     }
     return apiClient.put(`/task-images/${taskId}`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -180,6 +180,10 @@ export const tasksService = {
       ? `/tasks/user/${userId}?${queryString}`
       : `/tasks/user/${userId}`;
     return apiClient.get<Task[]>(url);
+  },
+
+  async createBulk(data: { tasks: CreateTaskData[] }): Promise<Task[]> {
+    return apiClient.post<Task[]>("/tasks/bulk", data);
   },
 
   async createTasksBulk(data: { tasks: CreateTaskData[] }): Promise<Task[]> {

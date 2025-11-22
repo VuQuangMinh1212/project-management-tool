@@ -31,7 +31,6 @@ interface TaskFilters {
   projectId?: string;
   status?: TaskStatus;
   priority?: TaskPriority;
-  weekSubmittedFor?: string;
   isDraft?: boolean;
 }
 

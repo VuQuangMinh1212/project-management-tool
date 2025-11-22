@@ -133,7 +133,6 @@ export default function CreateSubtaskModal({ isOpen, onClose, onSuccess, parentT
         priority: data.priority,
         dueDate: data.dueDate ? format(data.dueDate, 'yyyy-MM-dd') : undefined,
         estimatedHours: data.estimatedHours,
-        weekSubmittedFor: parentTask.weekSubmittedFor,
         isDraft: false,
         parentTaskId: parentTask.id,
       };

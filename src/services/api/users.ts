@@ -62,4 +62,8 @@ export const userService = {
   async getManagerEmployees(managerId: string): Promise<User[]> {
     return apiClient.get<User[]>(`/users/manager/${managerId}/employees`)
   },
+
+  async getEmployeesByManager(managerId: string): Promise<User[]> {
+    return apiClient.get<User[]>(`/users/manager/${managerId}/employees`)
+  },
 }

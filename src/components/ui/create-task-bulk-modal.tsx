@@ -58,7 +58,6 @@ const taskSchema = z.object({
   priority: z.string().min(1, 'Phải chọn độ ưu tiên'),
   dueDate: z.date().optional(),
   estimatedHours: z.number().min(0).optional(),
-  weekSubmittedFor: z.string().optional(),
   isDraft: z.boolean().default(false),
 });
 
@@ -182,7 +181,6 @@ export default function CreateTaskBulkModal({ isOpen, onClose, onSuccess }: Crea
         priority: task.priority,
         dueDate: task.dueDate ? format(task.dueDate, 'yyyy-MM-dd') : undefined,
         estimatedHours: task.estimatedHours,
-        weekSubmittedFor: task.weekSubmittedFor,
         isDraft: task.isDraft || false,
       }));
 
@@ -409,14 +407,6 @@ export default function CreateTaskBulkModal({ isOpen, onClose, onSuccess }: Crea
                       min="0"
                       step="0.5"
                       {...register(`tasks.${taskIndex}.estimatedHours`, { valueAsNumber: true })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Tuần nộp</Label>
-                    <Input
-                      placeholder="VD: 2025-W02"
-                      {...register(`tasks.${taskIndex}.weekSubmittedFor`)}
                     />
                   </div>
                 </div>

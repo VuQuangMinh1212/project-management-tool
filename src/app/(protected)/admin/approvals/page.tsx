@@ -101,14 +101,7 @@ export default function AdminApprovalsPage() {
     }
   };
 
-  const groupedByWeek = pendingTasks.reduce((acc, task) => {
-    const week = task.weekSubmittedFor || 'Không xác định';
-    if (!acc[week]) {
-      acc[week] = [];
-    }
-    acc[week].push(task);
-    return acc;
-  }, {} as Record<string, Task[]>);
+  const groupedByWeek: Record<string, Task[]> = {};
 
   const groupedByEmployee = pendingTasks.reduce((acc, task) => {
     const employee = task.assignee?.fullName || 'Không xác định';
@@ -280,9 +273,6 @@ export default function AdminApprovalsPage() {
             <div className="bg-gray-50 p-4 rounded-lg space-y-2">
               <p className="text-sm">
                 <span className="font-medium">Nhân viên:</span> {selectedTask?.assignee?.fullName}
-              </p>
-              <p className="text-sm">
-                <span className="font-medium">Tuần:</span> {selectedTask?.weekSubmittedFor}
               </p>
               {selectedTask?.estimatedHours && (
                 <p className="text-sm">

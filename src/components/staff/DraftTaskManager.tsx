@@ -43,7 +43,7 @@ interface DraftTaskManagerProps {
   draftTasks: Task[];
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
-  onSubmitBatch: (taskIds: string[], weekSubmittedFor: string) => void;
+  onSubmitBatch: (taskIds: string[]) => void;
 }
 
 export function DraftTaskManager({
@@ -56,14 +56,7 @@ export function DraftTaskManager({
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const tasksByWeek = draftTasks.reduce((acc, task) => {
-    const week = task.weekSubmittedFor || getCurrentWeek();
-    if (!acc[week]) {
-      acc[week] = [];
-    }
-    acc[week].push(task);
-    return acc;
-  }, {} as Record<string, Task[]>);
+  const tasksByWeek: Record<string, Task[]> = {};
 
   const handleTaskSelect = (taskId: string, checked: boolean) => {
     if (checked) {
@@ -90,10 +83,7 @@ export function DraftTaskManager({
 
     setIsSubmitting(true);
     try {
-      const firstTask = draftTasks.find(t => t.id === selectedTasks[0]);
-      const week = firstTask?.weekSubmittedFor || getCurrentWeek();
-      
-      await onSubmitBatch(selectedTasks, week);
+      await onSubmitBatch(selectedTasks);
       setSelectedTasks([]);
       setIsSubmitDialogOpen(false);
     } catch (error) {

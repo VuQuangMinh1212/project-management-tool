@@ -45,7 +45,6 @@ interface TaskBatch {
   staffId: string;
   staffName: string;
   staffAvatar?: string;
-  weekSubmittedFor: string;
   submittedAt: string;
   tasks: Task[];
 }
@@ -221,10 +220,6 @@ export function ManagerApproval({ pendingBatches, onBatchApproval }: ManagerAppr
                         <div>
                           <CardTitle className="text-lg">{batch.staffName}</CardTitle>
                           <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              {formatWeekForDisplay(batch.weekSubmittedFor)}
-                            </span>
                             <span>
                               Submitted {format(new Date(batch.submittedAt), "MMM d, h:mm a")}
                             </span>
@@ -439,10 +434,6 @@ export function ManagerApproval({ pendingBatches, onBatchApproval }: ManagerAppr
                   </p>
                   
                   <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                    <div className="flex justify-between">
-                      <span>Week:</span>
-                      <span className="font-medium">{formatWeekForDisplay(batch.weekSubmittedFor)}</span>
-                    </div>
                     <div className="flex justify-between">
                       <span>Tổng nhiệm vụ:</span>
                       <span className="font-medium">{batch.tasks.length}</span>

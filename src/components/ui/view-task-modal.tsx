@@ -161,12 +161,6 @@ export default function ViewTaskModal({ isOpen, taskId, onClose }: ViewTaskModal
                       <span>{task.estimatedHours}h</span>
                     </div>
                   )}
-                  {task.weekSubmittedFor && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Tuần làm việc:</span>
-                      <span>{task.weekSubmittedFor}</span>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 

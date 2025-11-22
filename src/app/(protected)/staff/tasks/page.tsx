@@ -207,13 +207,12 @@ export default function TasksPage() {
     setTasks((prev) => [...prev, ...createdTasks]);
   }
 
-  const handleCreateBulkTasks = (weekSubmittedFor: string, tasksData: any[]) => {
+  const handleCreateBulkTasks = (tasksData: any[]) => {
     const newTasks = tasksData.map((taskData, index) => ({
       ...taskData,
       id: `bulk-${Date.now()}-${index}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      weekSubmittedFor,
       status: TaskStatus.PENDING_APPROVAL,
       assigneeId: "current-user",
       assigneeName: "Người dùng hiện tại",
